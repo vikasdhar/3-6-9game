@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -10,56 +11,71 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
-    <TableLayout
-        android:id="@+id/tableLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="46dp" >
-
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp" >
-        </TableRow>
-
-        <TextView
-            android:id="@+id/editText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:text="Player 1 : 000" />
-
-        <TextView
-            android:id="@+id/editText1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Player 2 : 000" />
-
-    </TableLayout>
+        android:text="@string/hello_world"
+        android:textSize="24sp" />
 
     <org.xluz.droidacts.sanLiuJiu.ToDoListItemView
         android:id="@+id/editText3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tableLayout1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
         android:ems="10"
         android:inputType="none"
-        android:minHeight="270dp"
-        android:minWidth="120dp"
-        android:text="should show 9x9 grid" />
+        android:minHeight="280dp"
+        android:text="should show 9x9 grid"
+        android:textSize="12sp" />
 
-</RelativeLayout>
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp" >
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/editText2"
+                android:layout_weight="1"
+                android:text="Player 1 "
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/editText1"
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:paddingLeft="25dp"
+                android:text="Player 2 "
+                android:textSize="24sp" />
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_marginBottom="8dp" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_weight="1"
+                android:text="000"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_weight="1"
+                android:text="            " />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_weight="1"
+                android:paddingLeft="25dp"
+                android:text="000"
+                android:textSize="24dp" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
