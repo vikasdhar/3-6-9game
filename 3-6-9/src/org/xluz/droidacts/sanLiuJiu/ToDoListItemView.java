@@ -81,15 +81,70 @@ public class ToDoListItemView extends TextView {
 	                       getMeasuredWidth(), yy/9*9,
 	                       linePaint);
 	   
-	   
+	   super.onDraw(canvas);
 	}
+	
+//	@Override
+//	  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//	    int measuredHeight = measureHeight(heightMeasureSpec);
+//	    int measuredWidth = measureWidth(widthMeasureSpec);
+//
+//	    setMeasuredDimension(measuredHeight, measuredWidth);
+//	  }
+//
+//	  private int measureHeight(int measureSpec) {
+//	    int specMode = MeasureSpec.getMode(measureSpec);
+//	    int specSize = MeasureSpec.getSize(measureSpec);
+//
+//	    //  Default size if no limits are specified.
+//	    int result = 500;
+//
+//	    if (specMode == MeasureSpec.AT_MOST) {
+//	      // Calculate the ideal size of your
+//	      // control within this maximum size.
+//	      // If your control fills the available
+//	      // space return the outer bound.
+//	      result = specSize;
+//	    } else if (specMode == MeasureSpec.EXACTLY) {
+//	      // If your control can fit within these bounds return that value.
+//	      result = specSize;
+//	    }
+//	    return result;
+//	  }
+//
+//	  private int measureWidth(int measureSpec) {
+//	    int specMode = MeasureSpec.getMode(measureSpec);
+//	    int specSize = MeasureSpec.getSize(measureSpec);
+//
+//	    //  Default size if no limits are specified.
+//	    int result = 500;
+//
+//	    if (specMode == MeasureSpec.AT_MOST) {
+//	      // Calculate the ideal size of your control
+//	      // within this maximum size.
+//	      // If your control fills the available space
+//	      // return the outer bound.
+//	      result = specSize;
+//	    } else if (specMode == MeasureSpec.EXACTLY) {
+//	      // If your control can fit within these bounds return that value.
+//	      result = specSize;
+//	    }
+//	    return result;
+//	  }
+	  
+
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// Get the type of action this event represents
 		int actionPerformed = event.getAction();
-		float x0=event.getX();
-		float y0=event.getY();
-//		Toast.makeText(this, "U have touched the board",Toast.LENGTH_LONG).show();
+		if(actionPerformed==MotionEvent.ACTION_DOWN) {
+			int x0=(int) event.getX();
+			int y0=(int) event.getY();
+			TextView tt=(TextView)findViewById(R.id.editText1);
+			this.setText("At "+Integer.toString(x0)+","+Integer.toString(y0));
+		}
+		//tt.setText("At "+Integer.toString(x0)+","+Integer.toString(y0));
 		// Return true if the event was handled.
 		return true;
 	}
