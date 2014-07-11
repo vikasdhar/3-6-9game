@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ToDoListItemView extends TextView {
 	private Paint marginPaint;
@@ -38,49 +37,15 @@ public class ToDoListItemView extends TextView {
 	}
 	@Override 
 	public void onDraw (Canvas canvas) {
-		float xx=getMeasuredWidth()-5;
-		float yy=getMeasuredHeight()-5;
+		float xx=getMeasuredWidth();
+		float yy=getMeasuredHeight();
 		// Draw ruled lines
-	    canvas.drawLine(0, 0, 0, yy, linePaint);
-	    canvas.drawLine(0, 0, xx, 0, linePaint);
-	   
-	    canvas.drawLine(xx/9, 0, xx/9, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9,
-	                       getMeasuredWidth(), getMeasuredHeight()/9,
-	                       linePaint);
-	    canvas.drawLine(xx/9*2, 0, xx/9*2, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*2,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*2,
-	                       linePaint);
-	    canvas.drawLine(xx/9*3, 0, xx/9*3, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*3,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*3,
-	                       linePaint);
-	    canvas.drawLine(xx/9*4, 0, xx/9*4, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*4,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*4,
-	                       linePaint);
-	    canvas.drawLine(xx/9*5, 0, xx/9*5, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*5,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*5,
-	                       linePaint);
-	    canvas.drawLine(xx/9*6, 0, xx/9*6, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*6,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*6,
-	                       linePaint);
-	    canvas.drawLine(xx/9*7, 0, xx/9*7, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*7,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*7,
-	                       linePaint);
-	    canvas.drawLine(xx/9*8, 0, xx/9*8, yy, linePaint);
-	    canvas.drawLine(0, getMeasuredHeight()/9*8,
-	                       getMeasuredWidth(), getMeasuredHeight()/9*8,
-	                       linePaint);
-	    canvas.drawLine(xx/9*9, 0, xx/9*9, yy, linePaint);
-	    canvas.drawLine(0, yy/9*9,
-	                       getMeasuredWidth(), yy/9*9,
-	                       linePaint);
-	   
+		int i=0;
+		while (i <= 9) {
+			canvas.drawLine(xx/20+xx/10*i, yy/20, xx/10*i+xx/20, yy-yy/20, linePaint);
+			canvas.drawLine(xx/20, yy/10*i+yy/20,xx-xx/20, yy/10*i+yy/20, linePaint);
+			i++;
+		}
 	   super.onDraw(canvas);
 	}
 	
@@ -148,6 +113,36 @@ public class ToDoListItemView extends TextView {
 		// Return true if the event was handled.
 		return true;
 	}
+	 @Override
+	  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	    // The compass is a circle that fills as much space as possible.
+	    // Set the measured dimensions by figuring out the shortest boundary,
+	    // height or width.
+	    int measuredWidth = measure(widthMeasureSpec);
+	    int measuredHeight = measure(heightMeasureSpec);
+
+	    int d = Math.min(measuredWidth, measuredHeight);
+
+	    setMeasuredDimension(d, d);
+	  }
+
+	  private int measure(int measureSpec) {
+	    int result = 0;
+
+	    // Decode the measurement specifications.
+	    int specMode = MeasureSpec.getMode(measureSpec);
+	    int specSize = MeasureSpec.getSize(measureSpec);
+
+	    if (specMode == MeasureSpec.UNSPECIFIED) {
+	      // Return a default size of 200 if no bounds are specified.
+	      result = 200;
+	    } else {
+	      // As you want to fill the available space
+	      // always return the full available bounds.
+	      result = specSize;
+	    }
+	    return result;
+	  }
 
 }
 
