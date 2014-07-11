@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
 			introDialog.show();
             return true;
         case 1:
-            Toast.makeText(this, "You vs. AI",
+            Toast.makeText(this, "You vs. AI (to be done)",
                 Toast.LENGTH_LONG).show();
             return true;
         case 2:
