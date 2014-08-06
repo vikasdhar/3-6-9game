@@ -13,7 +13,7 @@ public class GameBoard extends TextView {
 	private Paint linePaint;
 //	private int paperColor;
 	private int curCol, curRow, gameState;
-	private int[][] board; // 0: empty, -1: selected, 1: occupied
+	//private int[][] board; // 0: empty, -1: selected, 1: occupied
 	GamePlay game0;
 	
 	public GameBoard (Context context, AttributeSet ats, int ds) {
@@ -42,8 +42,8 @@ public class GameBoard extends TextView {
 	    curCol = -1;
 	    curRow = -1;
 	    gameState = 0;
-	    board = new int[9][9];
-	    setBoardState(-2, -2);
+	    //board = new int[9][9];
+	    //setBoardState(-2, -2);
 	}
 	
 	@Override 
@@ -57,36 +57,40 @@ public class GameBoard extends TextView {
 			canvas.drawLine(xx/20, yy/10*i+yy/20,xx-xx/20, yy/10*i+yy/20, linePaint);
 			i++;
 		}
+		if(gameState > 0) {
 		// Draw moves
 		for(i=0; i<9; i++) {
 			for(j=0; j<9; j++) {
-				if(board[i][j] > 0) {
+				if(game0.board[i][j] > 0) {
 					canvas.drawCircle(j*xx/10+xx/10, i*yy/10+yy/10, xx/20-xx/250, markPaint);
 				}				
 			}
 		}
 		// Draw 
 		if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9) {
-			if(board[curRow][curCol] == -1)
+			if(game0.board[curRow][curCol] == -1)
 			// Draw block cursor
 			canvas.drawRect(curCol*xx/10+xx/20+xx/200, curRow*yy/10+yy/20+yy/200, 
 					curCol*xx/10+xx/20+xx/10-xx/200, curRow*yy/10+yy/20+yy/10-yy/200, cursorPaint);
 		}
-		
+		}
 		super.onDraw(canvas);
 	}
 	
 	private void setBoardState(int r, int c) {
 		if(r == -2) {
-			for(int i=0; i < 81; i++) board[i/9][i%9]=0;
+			for(int i=0; i < 81; i++) game0.board[i/9][i%9]=0;
 		}
 		else if(c!=curCol || r!=curRow) 
 				if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9)
-					if(board[curRow][curCol] == -1) board[curRow][curCol] = 0;
+					if(game0.board[curRow][curCol] == -1) game0.board[curRow][curCol] = 0;
 		if(r>=0 && c>=0 && r<9 && c<9) {
 			curCol = c; curRow = r;
-			if(board[curRow][curCol] == 0) board[curRow][curCol] = -1;
-			else if(board[curRow][curCol] == -1) board[curRow][curCol] = 1;
+			if(game0.board[curRow][curCol] == 0) game0.board[curRow][curCol] = -1;
+			else if(game0.board[curRow][curCol] == -1) {
+				game0.board[curRow][curCol] = 1;
+				game0.recordMove(r*9+c);
+			}
 		}
 	}
 	
@@ -94,7 +98,7 @@ public class GameBoard extends TextView {
 	public boolean onTouchEvent(MotionEvent event) {
 		// Get the type of action this event represents
 		int actionPerformed = event.getAction();
-		if(actionPerformed==MotionEvent.ACTION_DOWN) {
+		if(actionPerformed==MotionEvent.ACTION_DOWN && gameState>0) {
 			float xx=getMeasuredWidth();
 			float yy=getMeasuredHeight();
 			float x0=event.getX()-xx/20;
@@ -112,10 +116,11 @@ public class GameBoard extends TextView {
 			}
 			
 			setBoardState(r, c);
-			this.invalidate();
+			invalidate();
+			return true;
 		}
 	
-		return true;
+		return false;
 	
 	}
 	 @Override
@@ -158,6 +163,8 @@ public class GameBoard extends TextView {
 			setBoardState(-2, -2);
 			invalidate();
 		}
+		// game starts
+		if(gameState>0) game0.recordMove(101);
 	}
 
 	public GamePlay getGame0() {

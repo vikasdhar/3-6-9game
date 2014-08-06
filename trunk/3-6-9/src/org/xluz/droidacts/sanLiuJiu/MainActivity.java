@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+	GamePlay G0;
+	//private int Bcolor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +49,7 @@ public class MainActivity extends Activity {
 			//mnu3.setAlphabeticShortcut ('c');
 			mnu3.setIcon(R.drawable.ic_launcher);
 		}
-		MenuItem mnu4 = menu.add (0, 3, 3, "Settings");
-		{
-			//mnu4.setAlphabeticShortcut ('d');
-		}
+		menu.add (0, 3, 3, "Settings");
 	}
 	
 	private boolean MenuChoice(MenuItem item)
@@ -71,7 +70,9 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
             TextView tt = (TextView)findViewById(R.id.textView1);
             tt.setText("2-players game");
+            G0 = new GamePlay();
             GameBoard bd = (GameBoard)findViewById(R.id.editText3);
+            bd.setGame0(G0);
             bd.setGameState(2);
             return true;
         case 3:
@@ -87,5 +88,32 @@ public class MainActivity extends Activity {
 			return true;
         }
         return false;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if(event.getAction() == MotionEvent.ACTION_UP && G0!=null) {
+			int s = G0.getStatus();
+			if(s == 0) {
+				
+			}
+			else if(s >= 81) {
+				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
+			}
+			else if(s%2==1) {
+				TextView t1 = (TextView)findViewById(R.id.editText1);
+				t1.setBackgroundColor(0xFFA0A000);
+				TextView t2 = (TextView)findViewById(R.id.editText2);
+				t2.setBackgroundColor(0xFFFFFFFF);
+			}
+			else if(s%2==0) {
+				TextView t1 = (TextView)findViewById(R.id.editText1);
+				t1.setBackgroundColor(0xFFFFFFFF);
+				TextView t2 = (TextView)findViewById(R.id.editText2);
+				t2.setBackgroundColor(0xFFA0A000);				
+			}
+		}
+		return super.onTouchEvent(event);
 	}    
+
 }
