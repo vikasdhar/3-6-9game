@@ -13,7 +13,6 @@ public class GameBoard extends TextView {
 	private Paint linePaint;
 //	private int paperColor;
 	private int curCol, curRow, gameState;
-	//private int[][] board; // 0: empty, -1: selected, 1: occupied
 	GamePlay game0;
 	
 	public GameBoard (Context context, AttributeSet ats, int ds) {
@@ -62,7 +61,7 @@ public class GameBoard extends TextView {
 		for(i=0; i<9; i++) {
 			for(j=0; j<9; j++) {
 				if(game0.board[i][j] > 0) {
-					canvas.drawCircle(j*xx/10+xx/10, i*yy/10+yy/10, xx/20-xx/250, markPaint);
+					canvas.drawCircle(j*xx/10+xx/10, i*yy/10+yy/10, xx/20-xx/100, markPaint);
 				}				
 			}
 		}
