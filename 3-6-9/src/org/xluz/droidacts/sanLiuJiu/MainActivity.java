@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
         case 2:
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
             TextView tt = (TextView)findViewById(R.id.textView1);
-            tt.setText("2-players game");
+            tt.setText("2-players");
             G0 = new GamePlay();
             GameBoard bd = (GameBoard)findViewById(R.id.editText3);
             bd.setGame0(G0);
@@ -92,25 +92,34 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+	// events not dealt with by the views
 		if(event.getAction() == MotionEvent.ACTION_UP && G0!=null) {
 			int s = G0.getStatus();
 			if(s == 0) {
 				
 			}
-			else if(s >= 81) {
+			else if(s > 81) {
 				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 			}
 			else if(s%2==1) {
 				TextView t1 = (TextView)findViewById(R.id.editText1);
-				t1.setBackgroundColor(0xFFA0A000);
+				// highlight player-1
+				t1.setBackgroundColor(0xFFFFFF66);
 				TextView t2 = (TextView)findViewById(R.id.editText2);
 				t2.setBackgroundColor(0xFFFFFFFF);
+				// update score
+				TextView s2 = (TextView)findViewById(R.id.textView3);
+				s2.setText(Integer.toString(G0.scores2));
 			}
 			else if(s%2==0) {
 				TextView t1 = (TextView)findViewById(R.id.editText1);
 				t1.setBackgroundColor(0xFFFFFFFF);
+				// update score
+				TextView s1 = (TextView)findViewById(R.id.textView2);
+				s1.setText(Integer.toString(G0.scores1));
 				TextView t2 = (TextView)findViewById(R.id.editText2);
-				t2.setBackgroundColor(0xFFA0A000);				
+				// highlight player-2
+				t2.setBackgroundColor(0xFFFFFF66);				
 			}
 		}
 		return super.onTouchEvent(event);

@@ -1,10 +1,10 @@
 package org.xluz.droidacts.sanLiuJiu;
 
 public class GamePlay {
-	public int[] movesSeq; // cell=row*9+col
-	public int[][] board;  // 0: empty, -1: selected, 1: occupied
-	public int scores1, scores2;
-	int cstatus;
+	int[] movesSeq; // cell=row*9+col
+	int[][] board;  // 0: empty, -1: selected, 1: occupied
+	int scores1, scores2;
+	private int cstatus;
 	
 	public GamePlay(int[] movesSeq, int[][] board, int scores1, int scores2) {
 		super();
@@ -26,7 +26,12 @@ public class GamePlay {
 	}
 
 	public int recordMove(int m) {
+		if(cstatus > 81) return -1; // bounds checks
 		movesSeq[cstatus] = m;
+		if(cstatus > 0) {
+			if(cstatus%2==0) scores2 += checkScores(m);
+			else scores1 += checkScores(m);
+		}
 		cstatus++;
 		return checkScores(m);
 	}
