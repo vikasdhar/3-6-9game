@@ -3,8 +3,8 @@ package org.xluz.droidacts.sanLiuJiu;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.*;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -57,8 +57,6 @@ public class MainActivity extends Activity {
 	{ 
         switch (item.getItemId()) {
         case 0:
-            //Toast.makeText(this, "You clicked on Item 1",
-                //Toast.LENGTH_LONG).show();
         	AlertDialog.Builder introDialog = new AlertDialog.Builder(this);
 			introDialog.setTitle(R.string.intro);
 			introDialog.setMessage(R.string.instruction);
@@ -70,8 +68,11 @@ public class MainActivity extends Activity {
                 Toast.LENGTH_LONG).show();
             return true;
         case 2:
-            Toast.makeText(this, "2-players",
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
+            TextView tt = (TextView)findViewById(R.id.textView1);
+            tt.setText("2-players game");
+            GameBoard bd = (GameBoard)findViewById(R.id.editText3);
+            bd.setGameState(2);
             return true;
         case 3:
             Toast.makeText(this, "You clicked on Item 4",
