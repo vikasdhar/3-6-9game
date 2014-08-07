@@ -33,11 +33,49 @@ public class GamePlay {
 			else scores1 += checkScores(m);
 		}
 		cstatus++;
-		return checkScores(m);
+		return 0;
 	}
 	
 	int checkScores(int move) {
-		return 0;
+		int r = move/9;
+		int c = move%9;
+		int pts = 0;
+		int hc=1, vc=1;
+		// chk left direction for contiguously occupied cells
+		if(c > 0) {
+			for(int i=c-1; i>=0; i--) {
+				if(board[r][i] < 1) break;
+				hc++;
+			}
+		}
+		// chk right direction
+		if(c < 8) {
+			for(int i=c+1; i<9; i++) {
+				if(board[r][i] < 1) break;
+				hc++;
+			}
+		}
+		// horizontal scores
+		if(hc%3 == 0) pts += hc;
+		// chk up direction
+		if(r > 0) {
+			for(int j=r-1; j>=0; j--) {
+				if(board[j][c] < 1) break;
+				vc++;
+			}
+		}
+		// chk down direction
+		if(r < 8) {
+			for(int j=r+1; j<9; j++) {
+				if(board[j][c] < 1) break;
+				vc++;
+			}
+		}
+		// vertical scores
+		if(vc%3 == 0) pts += vc;
+		// chk diagonal directions (?)
+		
+		return pts;
 	}
 
 

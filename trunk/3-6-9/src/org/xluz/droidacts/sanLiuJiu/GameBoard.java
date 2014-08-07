@@ -41,8 +41,6 @@ public class GameBoard extends TextView {
 	    curCol = -1;
 	    curRow = -1;
 	    gameState = 0;
-	    //board = new int[9][9];
-	    //setBoardState(-2, -2);
 	}
 	
 	@Override 
