@@ -19,11 +19,11 @@
     <org.xluz.droidacts.sanLiuJiu.GameBoard
         android:id="@+id/editText3"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="none"
         android:minHeight="280dp"
-        android:text="should show 9x9 grid"
+        android:text="Game board"
         android:textSize="12sp" />
 
     <TableLayout

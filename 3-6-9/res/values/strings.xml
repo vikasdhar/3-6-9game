@@ -2,13 +2,13 @@
 <resources>
 
 <string name="intro">Introduction</string>    
-<string name="instruction">Tap a square on the grid to take turns marking it. Make rows, columns, or diagonals of exactly 3, 6, or 9 squares to score. Highest score wins.</string>    
+<string name="instruction"> (Double) Tap a square on the grid to take turns marking it. Make rows, columns, or diagonals of exactly 3, 6, or 9 squares to score. Highest score wins.</string>    
 <string name="app_name">3&#8211;6&#8211;9</string>
 <string name="action_settings">About</string>
 <string name="hello_world">Trying to make an app!</string>
 <string name="msg_about">About</string>
-<string name="msg_release">GPL release version 1.0.1</string>
+<string name="msg_release">GPL release version 0.1</string>
 <string name="msg_copyr">© 2011,2014 Cecil Cheung</string>
-<string name="msg_desc">A simple game to test your wits.\nGPL release version 1.0\n© 2014 Cecil Cheung\nhttp://3-6-9game.googlecode.com/</string>
+<string name="msg_desc">A simple board game to test your wits.\nGPL release version 1.0\n© 2014 Cecil Cheung\nhttp://3-6-9game.googlecode.com/</string>
     
 </resources>
