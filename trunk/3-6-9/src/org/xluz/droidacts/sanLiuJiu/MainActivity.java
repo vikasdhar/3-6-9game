@@ -3,12 +3,13 @@ package org.xluz.droidacts.sanLiuJiu;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private  TextView p1, p2, s1, s2;
+	private  TextView p1, p2, s1, s2, tt;
 	GamePlay G0;
 
     private void CreateMenu(Menu menu)
@@ -47,15 +48,16 @@ public class MainActivity extends Activity {
             return true;
         case 2:
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
-            TextView tt = (TextView)findViewById(R.id.textView1);
             tt.setText("2-players");
             G0 = new GamePlay();
             GameBoard bd = (GameBoard)findViewById(R.id.editText3);
             bd.setGame0(G0);
             bd.setGameState(2);
-            // clear scores
+            // reset scores
 			s1.setText(Integer.toString(G0.scores1));
 			s2.setText(Integer.toString(G0.scores2));
+			p1.setBackgroundColor(0xFFFFFFFF);
+			p2.setBackgroundColor(0xFFFFFFFF);
             return true;
         case 3:
             Toast.makeText(this, "Nothing to set (yet)",
@@ -94,6 +96,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
+        tt = (TextView)findViewById(R.id.textView1);
 		p1 = (TextView)findViewById(R.id.editText1);
 		p2 = (TextView)findViewById(R.id.editText2);
 		s1 = (TextView)findViewById(R.id.textView2);
@@ -115,14 +118,16 @@ public class MainActivity extends Activity {
 			else if(s%2==1) {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
-				p2.setBackgroundColor(0xFFFFFFFF);
+				p2.setBackgroundColor(Color.WHITE);
 				// update score
 				s2.setText(Integer.toString(G0.scores2));
+				tt.setText("Player 2 scores +"+Integer.toString(G0.movesScore[s-1])); 
 			}
 			else if(s%2==0) {
-				p1.setBackgroundColor(0xFFFFFFFF);
+				p1.setBackgroundColor(Color.WHITE);
 				// update score
 				s1.setText(Integer.toString(G0.scores1));
+				tt.setText("Player 1 scores +"+Integer.toString(G0.movesScore[s-1])); 
 				// highlight player-2
 				p2.setBackgroundColor(0xFFFFFF66);				
 			}
