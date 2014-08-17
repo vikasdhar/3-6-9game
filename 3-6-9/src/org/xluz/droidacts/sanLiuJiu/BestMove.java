@@ -29,6 +29,7 @@ public class BestMove {
 		}
 		else if(AI==1) {
 		// original AI routines
+			AIlevel1();
 		}
 		else if(AI==2) {
 		// think forwards 2 steps
@@ -48,4 +49,7 @@ public class BestMove {
 		return theMove;
 	}
 
+	private void AIlevel1() {
+		
+	}
 }
