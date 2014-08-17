@@ -1,28 +1,53 @@
 package org.xluz.droidacts.sanLiuJiu;
 
+/*
+  Game data object 
+
+Copyright (c) 2014 Cecil Cheung
+This software is released under the GNU General Public License version 3.
+See, for example, "http://www.gnu.org/licenses/gpl.html".
+*/
+
 public class GamePlay {
+	private int cstatus;
 	int[] movesSeq; // cell=row*9+col
 	int[][] board;  // 0: empty, -1: selected, 1: occupied
 	int[] movesScore;
 	int scores1, scores2;
 	int scoringMoveCs, scoringMoveCe, scoringMoveRs, scoringMoveRe;
 	int scoringMoveD0s, scoringMoveD0e, scoringMoveD1s, scoringMoveD1e;
-	private int cstatus;
 	
 	public GamePlay(int[] movesSeq) {
 		scores1 = scores2 = 0;
-		//cstatus = 81;
 		movesScore = new int[82];
 		this.movesSeq = new int[82];
 		board = new int[9][9];
 		for(int i=0; i < 81; i++) board[i/9][i%9] = 0;
-		for(cstatus=1; cstatus<82; cstatus++) {
-			this.movesSeq[cstatus] = movesSeq[cstatus];
-			if(movesSeq[cstatus]==-1) {
-				break;
+		try {
+			for(cstatus=1; cstatus<82; cstatus++) {
+				this.movesSeq[cstatus] = movesSeq[cstatus];
+				if(movesSeq[cstatus]==-1) {
+					break;
+				}
+				else {
+					board[movesSeq[cstatus]/9][movesSeq[cstatus]%9] = 1;
+					movesScore[cstatus] = checkScores(movesSeq[cstatus]);
+					if(movesScore[cstatus]<0) movesScore[cstatus]=0;  // should not happen
+					else {
+						if(cstatus%2==0) scores2 += movesScore[cstatus];
+						else scores1 += movesScore[cstatus];
+
+					}
+				}
 			}
-			else board[movesSeq[cstatus]/9][movesSeq[cstatus]%9] = 1;
+		} catch(Exception e) {  // in case of invalid movesSeq[]
+			scores1 = scores2 = cstatus = 0;
+			this.movesSeq[0] = 0;
 		}
+		scoringMoveCs = scoringMoveCe = -1; 
+		scoringMoveRs = scoringMoveRe = -1;
+		scoringMoveD0s = scoringMoveD0e = -1; 
+		scoringMoveD1s = scoringMoveD1e = -1;
 	}
 	
 	public GamePlay() {
@@ -31,6 +56,10 @@ public class GamePlay {
 		movesSeq = new int[82];
 		board = new int[9][9];
 		for(int i=0; i < 81; i++) board[i/9][i%9] = 0;
+		scoringMoveCs = scoringMoveCe = -1; 
+		scoringMoveRs = scoringMoveRe = -1;
+		scoringMoveD0s = scoringMoveD0e = -1; 
+		scoringMoveD1s = scoringMoveD1e = -1;
 	}
 
 	public int getStatus() {

@@ -1,5 +1,13 @@
 package org.xluz.droidacts.sanLiuJiu;
 
+/*
+  This class is a View representing a 3-6-9 game board 
+
+Copyright (c) 2014 Cecil Cheung
+This software is released under the GNU General Public License version 3.
+See, for example, "http://www.gnu.org/licenses/gpl.html".
+*/
+
 import android.content.Context;
 //import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -12,7 +20,6 @@ import android.widget.TextView;
 public class GameBoard extends TextView {
 	private Paint cursorPaint, markPaint;
 	private Paint linePaint, scorPaint;
-//	private int paperColor;
 	private int curCol, curRow, gameState;
 	GamePlay game0;
 	
@@ -35,6 +42,7 @@ public class GameBoard extends TextView {
 		cursorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    cursorPaint.setColor(Color.BLUE);
 	    linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	    linePaint.setStyle(Paint.Style.STROKE);
 	    linePaint.setColor(Color.LTGRAY);
 	    linePaint.setStrokeWidth(2);
 		markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -71,33 +79,36 @@ public class GameBoard extends TextView {
 			}
 		// Draw cursor
 			if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9) {
-				if(game0.board[curRow][curCol] == -1)
+				if(game0.board[curRow][curCol] == -1) {
 					// Draw block cursor
 					canvas.drawRect(curCol*xx/10+xx/20+xx/200, curRow*yy/10+yy/20+yy/200, 
 							curCol*xx/10+xx/20+xx/10-xx/200, curRow*yy/10+yy/20+yy/10-yy/200, cursorPaint);
+//						game0.scoringMoveCs = game0.scoringMoveCe = -1; 
+//						game0.scoringMoveRs = game0.scoringMoveRe = -1;
+//						game0.scoringMoveD0s = game0.scoringMoveD0e = -1; 
+//						game0.scoringMoveD1s = game0.scoringMoveD1e = -1;
+				}
 			}
 		// Draw scoring moves
 			if(game0.getStatus() > 1)
 				if(game0.movesScore[game0.getStatus()-1] > 0) {
-					if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9) {
+					int r = game0.movesSeq[game0.getStatus()-1] / 9;
+					int c = game0.movesSeq[game0.getStatus()-1] % 9;
+					if(c>=0 && r>=0 && c<9 && r<9) {
 						if(game0.scoringMoveCs>=0)
-							canvas.drawLine(game0.scoringMoveCs*xx/10+3*xx/40, curRow*yy/10+yy/10,
-									game0.scoringMoveCe*xx/10+5*xx/40, curRow*yy/10+yy/10, scorPaint);
+							canvas.drawLine(game0.scoringMoveCs*xx/10+3*xx/40, r*yy/10+yy/10,
+									game0.scoringMoveCe*xx/10+5*xx/40, r*yy/10+yy/10, scorPaint);
 						if(game0.scoringMoveRs>=0) 
-							canvas.drawLine(curCol*xx/10+xx/10, game0.scoringMoveRs*yy/10+3*yy/40, 
-									curCol*xx/10+xx/10, game0.scoringMoveRe*yy/10+5*yy/40, scorPaint);
-						game0.scoringMoveCs = game0.scoringMoveCe = -1; 
-						game0.scoringMoveRs = game0.scoringMoveRe = -1;
+							canvas.drawLine(c*xx/10+xx/10, game0.scoringMoveRs*yy/10+3*yy/40, 
+									c*xx/10+xx/10, game0.scoringMoveRe*yy/10+5*yy/40, scorPaint);
 						if(game0.scoringMoveD0s>=0) 
-							canvas.drawLine(game0.scoringMoveD0s*xx/10+3*xx/40, (curRow-curCol+game0.scoringMoveD0s)*yy/10+3*yy/40, 
-									game0.scoringMoveD0e*xx/10+5*xx/40, (curRow+game0.scoringMoveD0e-curCol)*yy/10+5*yy/40,
+							canvas.drawLine(game0.scoringMoveD0s*xx/10+3*xx/40, (r-c+game0.scoringMoveD0s)*yy/10+3*yy/40, 
+									game0.scoringMoveD0e*xx/10+5*xx/40, (r+game0.scoringMoveD0e-c)*yy/10+5*yy/40,
 									scorPaint);
 						if(game0.scoringMoveD1s>=0) 
-							canvas.drawLine(game0.scoringMoveD1e*xx/10+3*xx/40, (curRow+curCol-game0.scoringMoveD1e)*yy/10+5*yy/40, 
-									game0.scoringMoveD1s*xx/10+5*xx/40, (curRow+curCol-game0.scoringMoveD1s)*yy/10+3*yy/40,
+							canvas.drawLine(game0.scoringMoveD1e*xx/10+3*xx/40, (r+c-game0.scoringMoveD1e)*yy/10+5*yy/40, 
+									game0.scoringMoveD1s*xx/10+5*xx/40, (r+c-game0.scoringMoveD1s)*yy/10+3*yy/40,
 									scorPaint);
-						game0.scoringMoveD0s = game0.scoringMoveD0e = -1; 
-						game0.scoringMoveD1s = game0.scoringMoveD1e = -1;
 					}
 				}
 			
@@ -136,7 +147,7 @@ public class GameBoard extends TextView {
 			}
 			
 			setBoardState(r, c);
-			//invalidate();  // only need it sometimes
+			invalidate();  // only need it sometimes
 		// Debug use
 //			if(c>=0 && r>=0 && c<9 && r<9) {
 //				this.setText("Col "+Integer.toString(c)+" , Row "+Integer.toString(r));
@@ -194,11 +205,11 @@ public class GameBoard extends TextView {
 	public void setGameState(int gameState) {
 		this.gameState = gameState;
 		if(gameState==2) {
-			setBoardState(-2, -2);
+			//setBoardState(-2, -2);
 			invalidate();
 		}
 		// game starts, record game number
-		if(gameState>0) game0.recordMove(101);
+		if(gameState>0 && game0.movesSeq[0]<=0) game0.recordMove(101);
 	}
 	
 	public GamePlay getGame0() {

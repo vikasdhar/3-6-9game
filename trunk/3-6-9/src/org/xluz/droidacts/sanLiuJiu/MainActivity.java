@@ -1,4 +1,11 @@
 package org.xluz.droidacts.sanLiuJiu;
+/*
+  A rendition of a childhood board game 3-6-9 
+
+Copyright (c) 2014 Cecil Cheung
+This software is released under the GNU General Public License version 3.
+See, for example, "http://www.gnu.org/licenses/gpl.html".
+*/
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -10,6 +17,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	private  TextView p1, p2, s1, s2, tt;
+	GameBoard bd;
 	GamePlay G0;
 
     private void CreateMenu(Menu menu)
@@ -50,7 +58,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
             tt.setText("2-players");
             G0 = new GamePlay();
-            GameBoard bd = (GameBoard)findViewById(R.id.editText3);
+            //GameBoard bd = (GameBoard)findViewById(R.id.editText3);
             bd.setGame0(G0);
             bd.setGameState(2);
             // reset scores
@@ -58,6 +66,7 @@ public class MainActivity extends Activity {
 			s2.setText(Integer.toString(G0.scores2));
 			p1.setBackgroundColor(0xFFFFFFFF);
 			p2.setBackgroundColor(0xFFFFFFFF);
+			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
         case 3:
             Toast.makeText(this, "Nothing to set (yet)",
@@ -78,6 +87,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+		bd = (GameBoard)findViewById(R.id.editText3);
+		tt = (TextView)findViewById(R.id.textView1);
+		p1 = (TextView)findViewById(R.id.editText1);
+		p2 = (TextView)findViewById(R.id.editText2);
+		s1 = (TextView)findViewById(R.id.textView2);
+		s2 = (TextView)findViewById(R.id.textView3);
     }
 	
 	@Override
@@ -96,12 +111,33 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-        tt = (TextView)findViewById(R.id.textView1);
-		p1 = (TextView)findViewById(R.id.editText1);
-		p2 = (TextView)findViewById(R.id.editText2);
-		s1 = (TextView)findViewById(R.id.textView2);
-		s2 = (TextView)findViewById(R.id.textView3);
 		super.onStart();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		if(savedInstanceState!=null) {
+			int s = savedInstanceState.getInt("GameMode", 0);
+			if(s>0) {
+				if(savedInstanceState.containsKey("GameProgression")) {
+					G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
+					bd.setGame0(G0);
+					bd.setGameState(s);
+					bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
+				}
+			}
+		}
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt("GameMode", bd.getGameState());
+		if(bd.getGameState()>0 && G0!=null) {
+			outState.putInt("GameState", G0.getStatus());
+			outState.putIntArray("GameProgression", G0.movesSeq);
+		}
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
