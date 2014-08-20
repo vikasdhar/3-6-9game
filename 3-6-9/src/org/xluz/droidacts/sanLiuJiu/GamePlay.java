@@ -18,12 +18,19 @@ public class GamePlay {
 	int scoringMoveD0s, scoringMoveD0e, scoringMoveD1s, scoringMoveD1e;
 	
 	public GamePlay(int[] movesSeq) {
+		scoringMoveCs = scoringMoveCe = -1; 
+		scoringMoveRs = scoringMoveRe = -1;
+		scoringMoveD0s = scoringMoveD0e = -1; 
+		scoringMoveD1s = scoringMoveD1e = -1;
 		scores1 = scores2 = 0;
 		movesScore = new int[82];
 		this.movesSeq = new int[82];
 		board = new int[9][9];
-		for(int i=0; i < 81; i++) board[i/9][i%9] = 0;
+		for(int i=0; i < 81; i++) {
+			board[i/9][i%9] = 0;
+		}
 		try {
+			this.movesSeq[0] = movesSeq[0];
 			for(cstatus=1; cstatus<82; cstatus++) {
 				this.movesSeq[cstatus] = movesSeq[cstatus];
 				if(movesSeq[cstatus]==-1) {
@@ -44,10 +51,6 @@ public class GamePlay {
 			scores1 = scores2 = cstatus = 0;
 			this.movesSeq[0] = 0;
 		}
-		scoringMoveCs = scoringMoveCe = -1; 
-		scoringMoveRs = scoringMoveRe = -1;
-		scoringMoveD0s = scoringMoveD0e = -1; 
-		scoringMoveD1s = scoringMoveD1e = -1;
 	}
 	
 	public GamePlay() {
@@ -55,7 +58,10 @@ public class GamePlay {
 		movesScore = new int[82];
 		movesSeq = new int[82];
 		board = new int[9][9];
-		for(int i=0; i < 81; i++) board[i/9][i%9] = 0;
+		for(int i=0; i < 81; i++) {
+			movesSeq[i+1] = -1;
+			board[i/9][i%9] = 0;
+		}
 		scoringMoveCs = scoringMoveCe = -1; 
 		scoringMoveRs = scoringMoveRe = -1;
 		scoringMoveD0s = scoringMoveD0e = -1; 

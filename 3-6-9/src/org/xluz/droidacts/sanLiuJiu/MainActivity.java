@@ -20,29 +20,14 @@ public class MainActivity extends Activity {
 	GameBoard bd;
 	GamePlay G0;
 
-    private void CreateMenu(Menu menu)
-	{
-		MenuItem mnu1 = menu.add(0, 0, 0,"Intro");
-		{
-			
-			//mnu1.setAlphabeticShortcut('a');
-			mnu1.setIcon(R.drawable.ic_launcher);
-		}
-		MenuItem mnu2 = menu.add(0, 1, 1, "1-player game");
-		{
-			//mnu2.setAlphabeticShortcut('b');
-			mnu2.setIcon(R.drawable.ic_launcher);
-		}
-		MenuItem mnu3 = menu.add(0, 2, 2, "2-player game");
-		{
-			//mnu3.setAlphabeticShortcut ('c');
-			mnu3.setIcon(R.drawable.ic_launcher);
-		}
+    private void CreateMenu(Menu menu) {
+		menu.add(0, 0, 0,"Intro");
+		menu.add(0, 1, 1, "1-player game");
+		menu.add(0, 2, 2, "2-player game");
 		menu.add (0, 3, 3, "Settings");
 	}
 
-    private boolean MenuChoice(MenuItem item)
-	{ 
+    private boolean MenuChoice(MenuItem item) { 
         switch (item.getItemId()) {
         case 0:
         	AlertDialog.Builder introDialog = new AlertDialog.Builder(this);
@@ -52,7 +37,18 @@ public class MainActivity extends Activity {
 			introDialog.show();
             return true;
         case 1:
-            Toast.makeText(this, "U vs AI (to be done)", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "U vs Logic (testing)", Toast.LENGTH_LONG).show();
+            tt.setText("Against your phone");
+            G0 = new GamePlay();
+            bd.setGame0(G0);
+            bd.setGameState(1);
+            // reset scores
+			s1.setText(Integer.toString(G0.scores1));
+			s2.setText(Integer.toString(G0.scores2));
+			p1.setBackgroundColor(Color.WHITE);
+			p2.setBackgroundColor(Color.WHITE);
+            p2.setText("Logic");
+			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
         case 2:
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
@@ -64,8 +60,9 @@ public class MainActivity extends Activity {
             // reset scores
 			s1.setText(Integer.toString(G0.scores1));
 			s2.setText(Integer.toString(G0.scores2));
-			p1.setBackgroundColor(0xFFFFFFFF);
-			p2.setBackgroundColor(0xFFFFFFFF);
+			p1.setBackgroundColor(Color.WHITE);
+			p2.setBackgroundColor(Color.WHITE);
+			p2.setText("Player 2");
 			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
         case 3:
@@ -124,6 +121,7 @@ public class MainActivity extends Activity {
 					bd.setGame0(G0);
 					bd.setGameState(s);
 					bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
+					//bd.invalidate();
 				}
 			}
 		}
@@ -135,6 +133,7 @@ public class MainActivity extends Activity {
 		outState.putInt("GameMode", bd.getGameState());
 		if(bd.getGameState()>0 && G0!=null) {
 			outState.putInt("GameState", G0.getStatus());
+			if(G0.getStatus()<82) G0.movesSeq[G0.getStatus()] = -1;  // mark end of seq.
 			outState.putIntArray("GameProgression", G0.movesSeq);
 		}
 		super.onSaveInstanceState(outState);
@@ -148,10 +147,27 @@ public class MainActivity extends Activity {
 			if(s == 0) {
 				
 			}
-			else if(s > 81) {
-				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
+			else if(s%2==0) {
+				p1.setBackgroundColor(Color.WHITE);
+				// update score
+				s1.setText(Integer.toString(G0.scores1));
+				tt.setText("Player 1 scores +"+Integer.toString(G0.movesScore[s-1])); 
+				// highlight player-2
+				p2.setBackgroundColor(0xFFFFFF66);
+				if(bd.getGameState()==1) {  // vs. AI
+					//G0.movesSeq[s] = -1;  // mark the end of seq.
+					BestMove nextMov = new BestMove(G0.movesSeq);
+					int m = nextMov.getTheMove();
+					if(m >= 0 && G0.board[m/9][m%9] == 0) {
+						G0.board[m/9][m%9] = 1;
+						G0.recordMove(m);
+						bd.invalidate();
+						//needs to queue a UI event
+						s++;
+					}
+				}
 			}
-			else if(s%2==1) {
+			if(s%2==1) {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
@@ -159,15 +175,14 @@ public class MainActivity extends Activity {
 				s2.setText(Integer.toString(G0.scores2));
 				tt.setText("Player 2 scores +"+Integer.toString(G0.movesScore[s-1])); 
 			}
-			else if(s%2==0) {
+			if(s > 81) {
+				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 				p1.setBackgroundColor(Color.WHITE);
-				// update score
-				s1.setText(Integer.toString(G0.scores1));
-				tt.setText("Player 1 scores +"+Integer.toString(G0.movesScore[s-1])); 
-				// highlight player-2
-				p2.setBackgroundColor(0xFFFFFF66);				
+				p2.setBackgroundColor(0x00FFFFFF);
+				bd.setGameState(0);
 			}
 		}
+		
 		return super.onTouchEvent(event);
 	}    
 
