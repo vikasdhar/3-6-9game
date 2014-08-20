@@ -54,7 +54,7 @@ public class GameBoard extends TextView {
 	    scorPaint.setStrokeWidth(2.5f);
 	    curCol = -1;
 	    curRow = -1;
-	    gameState = 0;
+	    gameState = -1;
 	}
 	
 	 @Override 
@@ -68,7 +68,7 @@ public class GameBoard extends TextView {
 			canvas.drawLine(xx/20, yy/10*i+yy/20,xx-xx/20, yy/10*i+yy/20, linePaint);
 			i++;
 		}
-		if(gameState > 0) {
+		if(gameState >= 0) {
 		// Draw moves
 			for(i=0; i<9; i++) {
 				for(j=0; j<9; j++) {
@@ -182,10 +182,10 @@ public class GameBoard extends TextView {
 	}
 	
 	private void setBoardState(int r, int c) {
-		if(r == -2) {
-			for(int i=0; i < 81; i++) game0.board[i/9][i%9]=0;
-		}
-		else if(c!=curCol || r!=curRow) 
+//		if(r == -2) {
+//			for(int i=0; i < 81; i++) game0.board[i/9][i%9]=0;
+//		}
+		if(c!=curCol || r!=curRow)  // mark cursor position
 				if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9)
 					if(game0.board[curRow][curCol] == -1) game0.board[curRow][curCol] = 0;
 		if(r>=0 && c>=0 && r<9 && c<9) {
@@ -204,12 +204,13 @@ public class GameBoard extends TextView {
 
 	public void setGameState(int gameState) {
 		this.gameState = gameState;
-		if(gameState==2) {
-			//setBoardState(-2, -2);
-			invalidate();
-		}
+//		if(gameState==2) {
+//			//setBoardState(-2, -2);
+//			invalidate();
+//		}
 		// game starts, record game number
-		if(gameState>0 && game0.movesSeq[0]<=0) game0.recordMove(101);
+		if(gameState==2 && game0.movesSeq[0]<=0) game0.recordMove(201);
+		if(gameState==1 && game0.movesSeq[0]<=0) game0.recordMove(101);
 	}
 	
 	public GamePlay getGame0() {

@@ -1,8 +1,13 @@
 package org.xluz.droidacts.sanLiuJiu;
 
-/* Find the best move avail
- * 
+/* 
+  Find the best move available
+ 
+Copyright (c) 2014 Cecil Cheung
+This software is released under the GNU General Public License version 3.
+See, for example, "http://www.gnu.org/licenses/gpl.html".
  */
+
 public class BestMove {
 	private GamePlay board0;
 //	private int[] movesGiven;
@@ -26,6 +31,9 @@ public class BestMove {
 					break;
 				}
 			}
+			try {
+				Thread.sleep(1500);  // insert some delay for testing
+			} catch (InterruptedException e) {}
 		}
 		else if(AI==1) {
 		// original AI routines
