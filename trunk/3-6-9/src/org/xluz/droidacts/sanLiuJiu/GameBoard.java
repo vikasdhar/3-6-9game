@@ -111,6 +111,7 @@ public class GameBoard extends TextView {
 									scorPaint);
 					}
 				}
+				//else put a special mark on the last move?
 			
 		}
 		super.onDraw(canvas);
@@ -132,7 +133,7 @@ public class GameBoard extends TextView {
 	public boolean onTouchEvent(MotionEvent event) {
 		// Get the type of action this event represents
 		int actionPerformed = event.getAction();
-		if(actionPerformed==MotionEvent.ACTION_DOWN && gameState>0) {
+		if(actionPerformed==MotionEvent.ACTION_DOWN && (gameState==2 || gameState==1)) {
 			float xx=getMeasuredWidth();
 			float yy=getMeasuredHeight();
 			float x0=event.getX()-xx/20;
@@ -181,7 +182,7 @@ public class GameBoard extends TextView {
 		return result;
 	}
 	
-	private void setBoardState(int r, int c) {
+	void setBoardState(int r, int c) {
 //		if(r == -2) {
 //			for(int i=0; i < 81; i++) game0.board[i/9][i%9]=0;
 //		}

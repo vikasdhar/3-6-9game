@@ -8,6 +8,7 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -115,7 +116,7 @@ public class MainActivity extends Activity {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		if(savedInstanceState!=null) {
 			int s = savedInstanceState.getInt("GameMode", 0);
-			if(s>0) {
+			if(s>=0) {
 				if(savedInstanceState.containsKey("GameProgression")) {
 					G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
 					bd.setGame0(G0);
@@ -131,7 +132,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putInt("GameMode", bd.getGameState());
-		if(bd.getGameState()>0 && G0!=null) {
+		if(bd.getGameState()>=0 && G0!=null) {
 			outState.putInt("GameState", G0.getStatus());
 			if(G0.getStatus()<82) G0.movesSeq[G0.getStatus()] = -1;  // mark end of seq.
 			outState.putIntArray("GameProgression", G0.movesSeq);
@@ -155,19 +156,11 @@ public class MainActivity extends Activity {
 				// highlight player-2
 				p2.setBackgroundColor(0xFFFFFF66);
 				if(bd.getGameState()==1) {  // vs. AI
-					//G0.movesSeq[s] = -1;  // mark the end of seq.
-					BestMove nextMov = new BestMove(G0.movesSeq);
-					int m = nextMov.getTheMove();
-					if(m >= 0 && G0.board[m/9][m%9] == 0) {
-						G0.board[m/9][m%9] = 1;
-						G0.recordMove(m);
-						bd.invalidate();
-						//needs to queue a UI event
-						s++;
-					}
+					bd.setGameState(102);
+					dispatchAI(s);
 				}
 			}
-			if(s%2==1) {
+			else if(s%2==1) {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
@@ -184,6 +177,33 @@ public class MainActivity extends Activity {
 		}
 		
 		return super.onTouchEvent(event);
+	}
+
+	private int dispatchAI(int s) {
+		//G0.movesSeq[s] = -1;  // mark the end of seq.
+		new Thread(new Runnable(){
+			public void run() {
+				final BestMove nextMov = new BestMove(G0.movesSeq);
+				bd.post(new Runnable(){
+					public void run() {
+						int m = nextMov.getTheMove();
+						if(m >= 0 && G0.board[m/9][m%9] <= 0) {
+							bd.setBoardState(m/9, m%9);
+							bd.setBoardState(m/9, m%9);  // double tap
+							bd.invalidate();
+							bd.setGameState(1);
+						}
+					// send a fake touch event to trigger the main UI
+						dispatchTouchEvent(MotionEvent.obtain(
+						  SystemClock.uptimeMillis(), SystemClock.uptimeMillis()+100, 
+						  MotionEvent.ACTION_UP, 0, 0, 0)
+						);
+					}
+				});
+			}
+		}).start();
+				
+		return s;
 	}    
 
 }
