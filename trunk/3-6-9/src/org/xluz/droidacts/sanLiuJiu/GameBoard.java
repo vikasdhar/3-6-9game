@@ -111,7 +111,13 @@ public class GameBoard extends TextView {
 									scorPaint);
 					}
 				}
-				//else put a special mark on the last move?
+				else {  //else put a special mark on the last move?
+					int r = game0.movesSeq[game0.getStatus()-1] / 9;
+					int c = game0.movesSeq[game0.getStatus()-1] % 9;
+					if(c>=0 && r>=0 && c<9 && r<9) {
+						canvas.drawCircle(c*xx/10+xx/10, r*yy/10+yy/10, xx/60, scorPaint);
+					}
+				}
 			
 		}
 		super.onDraw(canvas);
