@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 			introDialog.show();
             return true;
         case 1:
-            Toast.makeText(this, "U vs Logic (testing)", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "U vs Logic", Toast.LENGTH_LONG).show();
             tt.setText("Against your phone");
             G0 = new GamePlay();
             bd.setGame0(G0);
@@ -157,7 +157,7 @@ public class MainActivity extends Activity {
 				p2.setBackgroundColor(0xFFFFFF66);
 				if(bd.getGameState()==1) {  // vs. AI
 					bd.setGameState(102);
-					dispatchAI(s);
+					dispatchAI(G0.movesSeq);
 				}
 			}
 			else if(s%2==1) {
@@ -179,11 +179,11 @@ public class MainActivity extends Activity {
 		return super.onTouchEvent(event);
 	}
 
-	private int dispatchAI(int s) {
+	private void dispatchAI(final int[] gameMoves) {
 		//G0.movesSeq[s] = -1;  // mark the end of seq.
 		new Thread(new Runnable(){
 			public void run() {
-				final BestMove nextMov = new BestMove(G0.movesSeq);
+				final BestMove nextMov = new BestMove(gameMoves);
 				bd.post(new Runnable(){
 					public void run() {
 						int m = nextMov.getTheMove();
@@ -202,8 +202,8 @@ public class MainActivity extends Activity {
 				});
 			}
 		}).start();
-				
-		return s;
+// may switch to AsyncTask class later if progress update is needed				
+
 	}    
 
 }
