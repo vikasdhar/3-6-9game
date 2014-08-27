@@ -5,7 +5,7 @@
 <string name="instruction">Players take turns (double) tap a square on the board to mark it. Make rows, columns, or diagonals of exactly 3, 6, or 9 squares to score. Highest score wins.</string>    
 <string name="app_name">3&#8211;6&#8211;9</string>
 <string name="action_settings">About</string>
-<string name="hello_world">Trying to make an app!</string>
+<string name="hello_world">Start a new game with the menu</string>
 <string name="msg_about">About</string>
 <string name="msg_release">GPL release version 0.1</string>
 <string name="msg_copyr">© 2014 Cecil Cheung</string>
