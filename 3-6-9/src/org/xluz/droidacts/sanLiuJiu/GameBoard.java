@@ -40,17 +40,17 @@ public class GameBoard extends TextView {
 	private void init() {
 		this.setTextColor(Color.GRAY);
 		cursorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	    cursorPaint.setColor(Color.BLUE);
+	    cursorPaint.setColor(0xCC9900FF);
 	    linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    linePaint.setStyle(Paint.Style.STROKE);
 	    linePaint.setColor(Color.LTGRAY);
 	    linePaint.setStrokeWidth(2);
 		markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	    markPaint.setColor(Color.BLUE);
+	    markPaint.setColor(0xCC9900FF);
 	    markPaint.setStrokeWidth(3);
 	    markPaint.setStyle(Paint.Style.STROKE);
 	    scorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	    scorPaint.setColor(Color.MAGENTA);
+	    scorPaint.setColor(0xFFFF9900);
 	    scorPaint.setStrokeWidth(2.5f);
 	    curCol = -1;
 	    curRow = -1;
