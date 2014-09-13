@@ -18,7 +18,7 @@ public class GamePlay {
 	int scoringMoveCs, scoringMoveCe, scoringMoveRs, scoringMoveRe;
 	int scoringMoveD0s, scoringMoveD0e, scoringMoveD1s, scoringMoveD1e;
 	
-	public GamePlay(int[] movesSeq) {
+	public GamePlay(int[] seq) {
 		scoringMoveCs = scoringMoveCe = -1; 
 		scoringMoveRs = scoringMoveRe = -1;
 		scoringMoveD0s = scoringMoveD0e = -1; 
@@ -29,18 +29,19 @@ public class GamePlay {
 		board = new int[9][9];
 		for(int i=0; i < 81; i++) {
 			board[i/9][i%9] = 0;
+			this.movesSeq[i+1] = -1;
 		}
 		try {
-			this.movesSeq[0] = movesSeq[0];
+			this.movesSeq[0] = seq[0];
 			for(cstatus=1; cstatus<82; cstatus++) {
-				this.movesSeq[cstatus] = movesSeq[cstatus];
-				if(movesSeq[cstatus]==-1) {
+				this.movesSeq[cstatus] = seq[cstatus];
+				if(seq[cstatus]==-1) {
 					break;
 				}
 				else {
 					board[movesSeq[cstatus]/9][movesSeq[cstatus]%9] = 1;
 					movesScore[cstatus] = checkScores(movesSeq[cstatus]);
-					if(movesScore[cstatus]<0) movesScore[cstatus]=0;  // should not happen
+					if(movesScore[cstatus]<0) movesScore[cstatus] = 0;  // should not happen
 					else {
 						if(cstatus%2==0) scores2 += movesScore[cstatus];
 						else scores1 += movesScore[cstatus];

@@ -21,6 +21,20 @@ public class MainActivity extends Activity {
 	GameBoard bd;
 	GamePlay G0;
 
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        CreateMenu(menu);
+        return true;
+    }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		return MenuChoice(item);
+	}
+
     private void CreateMenu(Menu menu) {
 		menu.add(0, 0, 0,"Intro");
 		menu.add(0, 1, 1, "1-player game");
@@ -55,7 +69,6 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
             tt.setText("2-players");
             G0 = new GamePlay();
-            //GameBoard bd = (GameBoard)findViewById(R.id.editText3);
             bd.setGame0(G0);
             bd.setGameState(2);
             // reset scores
@@ -91,27 +104,20 @@ public class MainActivity extends Activity {
 		p2 = (TextView)findViewById(R.id.editText2);
 		s1 = (TextView)findViewById(R.id.textView2);
 		s2 = (TextView)findViewById(R.id.textView3);
-    }
-	
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        CreateMenu(menu);
-        return true;
-    }
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		return MenuChoice(item);
-	}
+    }	
 
 	@Override
 	protected void onStart() {
 		super.onStart();
+		// make sure all the views are refreshed?
+//		if(G0 != null) {
+//			s1.setText(Integer.toString(G0.scores1));
+//			s2.setText(Integer.toString(G0.scores2));
+////			s1.invalidate();
+////			s2.invalidate();
+//		}
 	}
-
+	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		if(savedInstanceState!=null) {
@@ -122,11 +128,20 @@ public class MainActivity extends Activity {
 					bd.setGame0(G0);
 					bd.setGameState(s);
 					bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
-					//bd.invalidate();
+				// trigger the event handler
+					dispatchTouchEvent(MotionEvent.obtain(
+							  SystemClock.uptimeMillis(), SystemClock.uptimeMillis()+100, 
+							  MotionEvent.ACTION_UP, 0, 0, 0)
+							);
 				}
 			}
 		}
 		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 	}
 
 	@Override
@@ -150,8 +165,9 @@ public class MainActivity extends Activity {
 			}
 			else if(s%2==0) {
 				p1.setBackgroundColor(Color.WHITE);
-				// update score
+				// update scores
 				s1.setText(Integer.toString(G0.scores1));
+				s2.setText(Integer.toString(G0.scores2));
 				tt.setText("Player 1 scores +"+Integer.toString(G0.movesScore[s-1])); 
 				// highlight player-2
 				p2.setBackgroundColor(0xFFFFFF66);
@@ -164,13 +180,14 @@ public class MainActivity extends Activity {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
-				// update score
+				// update scores
+				s1.setText(Integer.toString(G0.scores1));
 				s2.setText(Integer.toString(G0.scores2));
-				tt.setText("Player 2 scores +"+Integer.toString(G0.movesScore[s-1])); 
+				tt.setText(p2.getText()+" scores +"+Integer.toString(G0.movesScore[s-1])); 
 			}
 			if(s > 81) {
 				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
-				p1.setBackgroundColor(Color.WHITE);
+				p1.setBackgroundColor(0x00FFFFFF);
 				p2.setBackgroundColor(0x00FFFFFF);
 				bd.setGameState(0);
 			}
@@ -180,7 +197,6 @@ public class MainActivity extends Activity {
 	}
 
 	private void dispatchAI(final int[] gameMoves) {
-		//G0.movesSeq[s] = -1;  // mark the end of seq.
 		new Thread(new Runnable(){
 			public void run() {
 				final BestMove nextMov = new BestMove(gameMoves);
