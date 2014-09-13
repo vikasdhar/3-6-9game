@@ -89,11 +89,17 @@ public class GameBoard extends TextView {
 //						game0.scoringMoveD1s = game0.scoringMoveD1e = -1;
 				}
 			}
-		// Draw scoring moves
-			if(game0.getStatus() > 1)
+		// Draw current scoring move
+			if(game0.getStatus() > 1) {
+				int r = game0.movesSeq[game0.getStatus()-1] / 9;
+				int c = game0.movesSeq[game0.getStatus()-1] % 9;
+			// put a special mark on the last move?
+				if(c>=0 && r>=0 && c<9 && r<9) {
+					canvas.drawCircle(c*xx/10+xx/10, r*yy/10+yy/10, xx/60, scorPaint);
+				}
 				if(game0.movesScore[game0.getStatus()-1] > 0) {
-					int r = game0.movesSeq[game0.getStatus()-1] / 9;
-					int c = game0.movesSeq[game0.getStatus()-1] % 9;
+//					int r = game0.movesSeq[game0.getStatus()-1] / 9;
+//					int c = game0.movesSeq[game0.getStatus()-1] % 9;
 					if(c>=0 && r>=0 && c<9 && r<9) {
 						if(game0.scoringMoveCs>=0)
 							canvas.drawLine(game0.scoringMoveCs*xx/10+3*xx/40, r*yy/10+yy/10,
@@ -111,14 +117,7 @@ public class GameBoard extends TextView {
 									scorPaint);
 					}
 				}
-				else {  //else put a special mark on the last move?
-					int r = game0.movesSeq[game0.getStatus()-1] / 9;
-					int c = game0.movesSeq[game0.getStatus()-1] % 9;
-					if(c>=0 && r>=0 && c<9 && r<9) {
-						canvas.drawCircle(c*xx/10+xx/10, r*yy/10+yy/10, xx/60, scorPaint);
-					}
-				}
-			
+			}
 		}
 		super.onDraw(canvas);
 	}
@@ -129,7 +128,6 @@ public class GameBoard extends TextView {
 		 // height or width.
 		 int measuredWidth = measure(widthMeasureSpec);
 		 int measuredHeight = measure(heightMeasureSpec);
-
 		 int d = Math.min(measuredWidth, measuredHeight);
 
 		 setMeasuredDimension(d, d);
@@ -216,8 +214,8 @@ public class GameBoard extends TextView {
 //			invalidate();
 //		}
 		// game starts, record game number
-		if(gameState==2 && game0.movesSeq[0]<=0) game0.recordMove(201);
-		if(gameState==1 && game0.movesSeq[0]<=0) game0.recordMove(101);
+		if(gameState==2 && game0.movesSeq[0]<=0) game0.recordMove(2001);
+		if(gameState==1 && game0.movesSeq[0]<=0) game0.recordMove(1001);
 	}
 	
 	public GamePlay getGame0() {
