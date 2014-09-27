@@ -13,7 +13,7 @@ public class GamePlay {
 	int[] movesSeq; // cell=row*9+col
 	int[][] board;  // 0: empty, -1: selected, 1: occupied
 	int[] movesScore;
-	int hooseturn;
+	int huseturn;
 	int scores1, scores2;
 	int scoringMoveCs, scoringMoveCe, scoringMoveRs, scoringMoveRe;
 	int scoringMoveD0s, scoringMoveD0e, scoringMoveD1s, scoringMoveD1e;
@@ -23,7 +23,7 @@ public class GamePlay {
 		scoringMoveRs = scoringMoveRe = -1;
 		scoringMoveD0s = scoringMoveD0e = -1; 
 		scoringMoveD1s = scoringMoveD1e = -1;
-		hooseturn = scores1 = scores2 = 0;
+		huseturn = scores1 = scores2 = 0;
 		movesScore = new int[82];
 		this.movesSeq = new int[82];
 		board = new int[9][9];
@@ -56,7 +56,7 @@ public class GamePlay {
 	}
 	
 	public GamePlay() {
-		hooseturn = scores1 = scores2 = cstatus = 0;
+		huseturn = scores1 = scores2 = cstatus = 0;
 		movesScore = new int[82];
 		movesSeq = new int[82];
 		board = new int[9][9];
@@ -84,7 +84,7 @@ public class GamePlay {
 			movesScore[cstatus] = sc;
 		}
 		cstatus++;
-		hooseturn = (hooseturn+1)%2;
+		huseturn = (huseturn + 1)%2;
 		return sc;
 	}
 	

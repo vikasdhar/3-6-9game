@@ -1,5 +1,7 @@
 package org.xluz.droidacts.sanLiuJiu;
 
+import android.util.Log;
+
 /* 
   Find the best move available
  
@@ -75,11 +77,7 @@ public class BestMove {
 	private void AIlevel3() {
 		if(this.theMove < 0 || this.theMove > 80) return;  // something not right
 		
-//		int mxsc = board0.board[this.theMove/9][this.theMove%9];
 		int sc, s, mnsc, mngiveaway=100;
-//		int[][] board1 = new int[81][81];
-//		for(int i=0; i<81; i++) 
-//			board1[i/9][i%9] = board0.board[i/9][i%9];
 
 		for(int i=0; i<81; i++) {
 			if(board0.board[i/9][i%9] > 0) continue;
@@ -119,21 +117,26 @@ public class BestMove {
 		
 		for(int i=0; i<81; i++) {
 		// only examine highest score moves
-			if(board0.board[n/9][n%9] != mxsc) continue;
-			board0.board[n/9][n%9] = 1;
-			mnsc = 0;
-		// find the lowest counter-scores
-			for(int j=0; j<81; j++) {
-				if(board0.board[j/9][j%9] <= 0) { // empty squares
-					s = board0.checkScores(j);
-					if(mnsc < s) mnsc = s;        // find max potential score
+			if(board0.board[n/9][n%9] == mxsc) {
+				board0.board[n/9][n%9] = 1;
+				mnsc = 0;
+				// find the lowest counter-scores
+				for(int j=0; j<81; j++) {
+					if(board0.board[j/9][j%9] <= 0) { // empty squares
+						s = board0.checkScores(j);
+						if(mnsc < s) mnsc = s;        // find max potential score
+					}
 				}
+				if(mngiveaway > mnsc) {
+					mngiveaway = mnsc;
+					this.theMove = n;
+					Log.d("AI2-b", "Turn:"+Integer.toString(board0.getStatus())+
+							", theMove->"+Integer.toString(n)+
+							", giveaway="+Integer.toString(mnsc)+
+							", score="+Integer.toString(mxsc));
+				}
+				board0.board[n/9][n%9] = mxsc;
 			}
-			if(mngiveaway > mnsc) {
-				mngiveaway = mnsc;
-				this.theMove = n;
-			}
-			board0.board[n/9][n%9] = mxsc;
 			n++;
 			if(n>80) n = 0;
 		}
