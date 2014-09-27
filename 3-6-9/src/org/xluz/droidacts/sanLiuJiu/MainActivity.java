@@ -128,6 +128,8 @@ public class MainActivity extends Activity {
 					bd.setGame0(G0);
 					bd.setGameState(s);
 					bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
+				// need to restore players names
+					
 				// trigger the event handler
 					dispatchTouchEvent(MotionEvent.obtain(
 							  SystemClock.uptimeMillis(), SystemClock.uptimeMillis()+100, 
