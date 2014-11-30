@@ -11,4 +11,17 @@
 <string name="msg_copyr">© 2014 Cecil Cheung</string>
 <string name="msg_desc">A simple board game to test your wits. See http://3-6-9game.googlecode.com/\n© 2014 Cecil Cheung\n</string>
     
+<string-array name="nlevel">
+  <item>0</item>
+  <item>1</item>
+  <item>2</item>
+  <item>3</item>
+</string-array>
+<string-array name="LevelsDifficulty">
+  <item>Are You Smarter Than a Goldfish?</item>
+  <item>Are You Smarter Than a T-Rex?</item>
+  <item>Are You Smarter Than a Fifth Grader?</item>
+  <item>Are You Smarter Than the Logic?</item>
+</string-array>
+
 </resources>
