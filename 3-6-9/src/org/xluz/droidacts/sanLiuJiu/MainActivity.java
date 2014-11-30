@@ -8,6 +8,7 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
 
 import android.os.Bundle;
+import android.content.Intent;
 import android.os.SystemClock;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -80,8 +81,12 @@ public class MainActivity extends Activity {
 			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
         case 3:
-            Toast.makeText(this, "Nothing to set (yet)",
-                Toast.LENGTH_LONG).show();
+        	Intent itt = new Intent(this, AppPreferenceActivity.class);
+			startActivityForResult(itt, 1);
+//        	Intent i = new Intent(".AppPreferenceActivity");
+//        	startActivity(i);
+        	// Toast.makeText(this, "Nothing to set (yet)",
+        	//Toast.LENGTH_LONG).show();
             return true;
 		case R.id.action_settings:
 			AlertDialog.Builder aboutDialog1 = new AlertDialog.Builder(this);
@@ -105,6 +110,9 @@ public class MainActivity extends Activity {
 		s1 = (TextView)findViewById(R.id.textView2);
 		s2 = (TextView)findViewById(R.id.textView3);
     }	
+	
+	
+	
 
 	@Override
 	protected void onStart() {
