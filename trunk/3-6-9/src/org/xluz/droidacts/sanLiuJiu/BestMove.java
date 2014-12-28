@@ -10,14 +10,17 @@ This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
  */
 
+
 public class BestMove {
+	final static int MAX_AI_Level = 3;
 	private GamePlay board0;
-	private int theMove, AIlevel=2;
+	private int theMove, AIlevel;
 
 	public BestMove(int[] moves) {
 		board0 = new GamePlay(moves);
+		this.AIlevel = 0;
 		this.theMove = -1;
-		if(board0.getStatus()<82) go(AIlevel);
+		//if(board0.getStatus()<82) go(AIlevel);
 	}
 
 	public int getAIlevel() {
@@ -25,6 +28,9 @@ public class BestMove {
 	}
 
 	public void setAIlevel(int L) {
+		if(L <= 0) AIlevel = 0;
+		else if(L >= MAX_AI_Level) AIlevel = MAX_AI_Level;
+		else
 		AIlevel = L;
 	}
 
@@ -32,9 +38,10 @@ public class BestMove {
 		return theMove;
 	}
 
-	public int go(int AI) {
+	public int go( ) {
+		if(board0.getStatus() >= 82) return -1;
 		this.theMove = -1;
-		if(AI==0) {
+		if(AIlevel<=0) {
 		// random play, for testing
 			java.util.Random RANG = new java.util.Random();
 			int n = RANG.nextInt(82-board0.getStatus());
@@ -49,14 +56,14 @@ public class BestMove {
 				Thread.sleep(1500);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AI==1) {
+		else if(AIlevel==1) {
 		// max next move score
 			AIlevel1();
 			try {
 				Thread.sleep(1000);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AI==2) {  // more like level 1.5
+		else if(AIlevel==2) {  // more like level 1.5
 		// find potential scores
 			AIlevel1();
 		// think forward 1 more step
@@ -65,7 +72,7 @@ public class BestMove {
 				Thread.sleep(900);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AI==3) {
+		else if(AIlevel>=3) {
 		// find potential scores
 			AIlevel1();
 		// minimize score-giveaway

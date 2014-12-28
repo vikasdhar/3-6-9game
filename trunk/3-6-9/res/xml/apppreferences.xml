@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Choose the level of difficulty">
-        <ListPreference
-        android:key="Levels of Difficulty" 
-        android:entryValues="@array/nlevel" 
-        android:entries="@array/LevelsDifficulty" 
-        android:defaultValue="0" 
-        android:title="Levels of Difficulty"
-            />
-    </PreferenceCategory>
-</PreferenceScreen>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <PreferenceCategory android:title="Game mode" >
+        <CheckBoxPreference
+            android:key="oldRules"
+            android:title="Original game rules"
+            android:defaultValue="false" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/LevelsDifficulty"
+            android:entryValues="@array/nlevel"
+            android:key="LevelsOfDifficulty"
+            android:dialogTitle="Are you smarter than ..."
+            android:summary="Are you smarter than ?"
+            android:title="Levels of difficulty" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
