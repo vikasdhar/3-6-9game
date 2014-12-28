@@ -9,7 +9,9 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -18,7 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private  TextView p1, p2, s1, s2, tt;
+	SharedPreferences settingsPrefs;
+	private TextView p1, p2, s1, s2, tt;
+	private int debugMsg=1;
+	private int gameSettings=0;
+	/* 0: no game in progress
+	 * lowest 4 bits: AI level
+	 * bit 5: original rules
+	 * bit 6: 2-player
+	 */
 	GameBoard bd;
 	GamePlay G0;
 
@@ -40,7 +50,7 @@ public class MainActivity extends Activity {
 		menu.add(0, 0, 0,"Intro");
 		menu.add(0, 1, 1, "1-player game");
 		menu.add(0, 2, 2, "2-player game");
-		menu.add (0, 3, 3, "Settings");
+		//menu.add (0, 3, 3, "Settings");
 	}
 
     private boolean MenuChoice(MenuItem item) { 
@@ -55,40 +65,40 @@ public class MainActivity extends Activity {
         case 1:
             Toast.makeText(this, "U vs Logic", Toast.LENGTH_LONG).show();
             tt.setText("Against your phone");
-            G0 = new GamePlay();
-            bd.setGame0(G0);
-            bd.setGameState(1);
-            // reset scores
-			s1.setText(Integer.toString(G0.scores1));
-			s2.setText(Integer.toString(G0.scores2));
-			p1.setBackgroundColor(Color.WHITE);
-			p2.setBackgroundColor(Color.WHITE);
-            p2.setText("Logic");
-			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
+            startAGame(1);
+        //Get game settings from preference
+//            gameSettings = Integer.parseInt(settingsPrefs.getString("LevelsOfDifficulty", "2"));
+//            G0 = new GamePlay();
+//            bd.setGame0(G0);
+//            bd.setGameState(100);
+//            // reset scores
+//			s1.setText(Integer.toString(G0.scores1));
+//			s2.setText(Integer.toString(G0.scores2));
+//			p1.setBackgroundColor(Color.WHITE);
+//			p2.setBackgroundColor(Color.WHITE);
+//            p2.setText("Logic");
+//			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
         case 2:
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
             tt.setText("2-players");
-            G0 = new GamePlay();
-            bd.setGame0(G0);
-            bd.setGameState(2);
-            // reset scores
-			s1.setText(Integer.toString(G0.scores1));
-			s2.setText(Integer.toString(G0.scores2));
-			p1.setBackgroundColor(Color.WHITE);
-			p2.setBackgroundColor(Color.WHITE);
-			p2.setText("Player 2");
-			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
+            startAGame(2);
+//            G0 = new GamePlay();
+//            bd.setGame0(G0);
+//            bd.setGameState(200);
+//            // reset scores
+//			s1.setText(Integer.toString(G0.scores1));
+//			s2.setText(Integer.toString(G0.scores2));
+//			p1.setBackgroundColor(Color.WHITE);
+//			p2.setBackgroundColor(Color.WHITE);
+//			p2.setText("Player 2");
+//			bd.setText("Game starts: "+Integer.toString(G0.movesSeq[0]));
             return true;
-        case 3:
+        case R.id.action_settings:
         	Intent itt = new Intent(this, AppPreferenceActivity.class);
 			startActivityForResult(itt, 1);
-//        	Intent i = new Intent(".AppPreferenceActivity");
-//        	startActivity(i);
-        	// Toast.makeText(this, "Nothing to set (yet)",
-        	//Toast.LENGTH_LONG).show();
             return true;
-		case R.id.action_settings:
+		case R.id.about_app:
 			AlertDialog.Builder aboutDialog1 = new AlertDialog.Builder(this);
 			aboutDialog1.setTitle(R.string.msg_about);
 			aboutDialog1.setMessage(R.string.msg_desc);
@@ -109,6 +119,8 @@ public class MainActivity extends Activity {
 		p2 = (TextView)findViewById(R.id.editText2);
 		s1 = (TextView)findViewById(R.id.textView2);
 		s2 = (TextView)findViewById(R.id.textView3);
+//        Context appContext = getApplicationContext();
+        settingsPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }	
 	
 	
@@ -130,12 +142,15 @@ public class MainActivity extends Activity {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		if(savedInstanceState!=null) {
 			int s = savedInstanceState.getInt("GameMode", 0);
-			if(s>=0) {
+			if(s>=0 && s<2048) {
+				// check game mode and restore gameSettings
+				this.gameSettings = s;
 				if(savedInstanceState.containsKey("GameProgression")) {
 					G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
 					bd.setGame0(G0);
 					bd.setGameState(s);
-					bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
+					if(this.debugMsg > 0)
+						bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
 				// need to restore players names
 					
 				// trigger the event handler
@@ -143,7 +158,14 @@ public class MainActivity extends Activity {
 							  SystemClock.uptimeMillis(), SystemClock.uptimeMillis()+100, 
 							  MotionEvent.ACTION_UP, 0, 0, 0)
 							);
+				} else {
+					if(this.debugMsg > 0)
+						bd.setText("Failed to restore last game");
 				}
+			} else {
+				// invalid game settings or progress
+				if(this.debugMsg > 0)
+					bd.setText("Last game aborted ");
 			}
 		}
 		super.onRestoreInstanceState(savedInstanceState);
@@ -173,7 +195,7 @@ public class MainActivity extends Activity {
 			if(s == 0) {
 				
 			}
-			else if(s%2==0) {
+			else if(G0.huseturn == 0) {
 				p1.setBackgroundColor(Color.WHITE);
 				// update scores
 				s1.setText(Integer.toString(G0.scores1));
@@ -181,12 +203,12 @@ public class MainActivity extends Activity {
 				tt.setText("Player 1 scores +"+Integer.toString(G0.movesScore[s-1])); 
 				// highlight player-2
 				p2.setBackgroundColor(0xFFFFFF66);
-				if(bd.getGameState()==1) {  // vs. AI
-					bd.setGameState(102);
+				if(bd.getGameState()>0 && bd.getGameState()<64) {  // vs. AI
+					bd.setGameState(bd.getGameState()+1024);
 					dispatchAI(G0.movesSeq);
 				}
 			}
-			else if(s%2==1) {
+			else if(G0.huseturn == 1) {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
@@ -210,6 +232,8 @@ public class MainActivity extends Activity {
 		new Thread(new Runnable(){
 			public void run() {
 				final BestMove nextMov = new BestMove(gameMoves);
+				nextMov.setAIlevel(gameSettings%16);
+				nextMov.go();// inf loop if level out-of-range
 				bd.post(new Runnable(){
 					public void run() {
 						int m = nextMov.getTheMove();
@@ -217,7 +241,9 @@ public class MainActivity extends Activity {
 							bd.setBoardState(m/9, m%9);
 							bd.setBoardState(m/9, m%9);  // double tap
 							bd.invalidate();
-							bd.setGameState(1);
+							bd.setGameState(bd.getGameState()-1024);
+						} else {
+							// no move? surrender?
 						}
 					// send a fake touch event to trigger the main UI
 						dispatchTouchEvent(MotionEvent.obtain(
@@ -229,7 +255,38 @@ public class MainActivity extends Activity {
 			}
 		}).start();
 // may switch to AsyncTask class later if progress update is needed				
-
 	}    
 
+	private void startAGame(int mode) {
+		long Tnow = System.currentTimeMillis()/1000;  // since 1970
+		Tnow -= 978307200L;  // since 2001
+		
+		// Get game settings from preference
+		if(mode == 1) {  // 1 player
+			// gameSettings = 0;
+			gameSettings = Integer.parseInt(settingsPrefs.getString("LevelsOfDifficulty", "1"));
+		} else { // 2 or more players
+			gameSettings = 64;
+		}
+		if(settingsPrefs.getBoolean("oldRules", true)) {
+			gameSettings += 32;
+		}
+
+		G0 = new GamePlay();
+		G0.recordMove((int)(101+Tnow));
+		bd.setGame0(G0);
+		bd.setGameState(gameSettings);
+		// reset scores
+		s1.setText(Integer.toString(G0.scores1));
+		s2.setText(Integer.toString(G0.scores2));
+		p1.setBackgroundColor(Color.WHITE);
+		p2.setBackgroundColor(Color.WHITE);
+		if(mode == 1)
+			p2.setText("Logic");
+		else
+			p2.setText("Player 2");
+		if(this.debugMsg > 0)
+			bd.setText("Game starts: " + Integer.toString(G0.movesSeq[0]));
+	}
+	
 }

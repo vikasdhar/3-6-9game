@@ -98,8 +98,6 @@ public class GameBoard extends TextView {
 					canvas.drawCircle(c*xx/10+xx/10, r*yy/10+yy/10, xx/60, scorPaint);
 				}
 				if(game0.movesScore[game0.getStatus()-1] > 0) {
-//					int r = game0.movesSeq[game0.getStatus()-1] / 9;
-//					int c = game0.movesSeq[game0.getStatus()-1] % 9;
 					if(c>=0 && r>=0 && c<9 && r<9) {
 						if(game0.scoringMoveCs>=0)
 							canvas.drawLine(game0.scoringMoveCs*xx/10+3*xx/40, r*yy/10+yy/10,
@@ -137,7 +135,7 @@ public class GameBoard extends TextView {
 	public boolean onTouchEvent(MotionEvent event) {
 		// Get the type of action this event represents
 		int actionPerformed = event.getAction();
-		if(actionPerformed==MotionEvent.ACTION_DOWN && (gameState==2 || gameState==1)) {
+		if(actionPerformed==MotionEvent.ACTION_DOWN && (gameState>0 || gameState<1024)) {
 			float xx=getMeasuredWidth();
 			float yy=getMeasuredHeight();
 			float x0=event.getX()-xx/20;
@@ -187,9 +185,6 @@ public class GameBoard extends TextView {
 	}
 	
 	void setBoardState(int r, int c) {
-//		if(r == -2) {
-//			for(int i=0; i < 81; i++) game0.board[i/9][i%9]=0;
-//		}
 		if(c!=curCol || r!=curRow)  // mark cursor position
 				if(curCol>=0 && curRow>=0 && curCol<9 && curRow<9)
 					if(game0.board[curRow][curCol] == -1) game0.board[curRow][curCol] = 0;
@@ -209,13 +204,6 @@ public class GameBoard extends TextView {
 
 	public void setGameState(int gameState) {
 		this.gameState = gameState;
-//		if(gameState==2) {
-//			//setBoardState(-2, -2);
-//			invalidate();
-//		}
-		// game starts, record game number
-		if(gameState==2 && game0.movesSeq[0]<=0) game0.recordMove(2001);
-		if(gameState==1 && game0.movesSeq[0]<=0) game0.recordMove(1001);
 	}
 	
 	public GamePlay getGame0() {
