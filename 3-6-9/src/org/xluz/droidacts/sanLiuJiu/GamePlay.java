@@ -35,6 +35,7 @@ public class GamePlay {
 			this.movesSeq[0] = seq[0];
 			for(cstatus=1; cstatus<82; cstatus++) {
 				this.movesSeq[cstatus] = seq[cstatus];
+				huseturn = (huseturn + 1)%2;
 				if(seq[cstatus]==-1) {
 					break;
 				}
@@ -49,6 +50,7 @@ public class GamePlay {
 					}
 				}
 			}
+			if(this.cstatus>81) huseturn = (huseturn + 1)%2;
 		} catch(Exception e) {  // in case of invalid movesSeq[]
 			scores1 = scores2 = cstatus = 0;
 			this.movesSeq[0] = 0;
