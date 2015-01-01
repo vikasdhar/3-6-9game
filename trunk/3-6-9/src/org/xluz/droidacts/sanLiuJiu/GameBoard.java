@@ -135,7 +135,7 @@ public class GameBoard extends TextView {
 	public boolean onTouchEvent(MotionEvent event) {
 		// Get the type of action this event represents
 		int actionPerformed = event.getAction();
-		if(actionPerformed==MotionEvent.ACTION_DOWN && (gameState>0 || gameState<1024)) {
+		if(actionPerformed==MotionEvent.ACTION_DOWN && (gameState>0 && gameState<1024)) {
 			float xx=getMeasuredWidth();
 			float yy=getMeasuredHeight();
 			float x0=event.getX()-xx/20;

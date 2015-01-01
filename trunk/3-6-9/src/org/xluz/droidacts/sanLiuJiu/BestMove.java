@@ -12,7 +12,7 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 
 
 public class BestMove {
-	final static int MAX_AI_Level = 3;
+	final static int MAX_AI_Level = 4;
 	private GamePlay board0;
 	private int theMove, AIlevel;
 
@@ -28,10 +28,9 @@ public class BestMove {
 	}
 
 	public void setAIlevel(int L) {
-		if(L <= 0) AIlevel = 0;
+		if(L <= 1) AIlevel = 1;
 		else if(L >= MAX_AI_Level) AIlevel = MAX_AI_Level;
-		else
-		AIlevel = L;
+		else AIlevel = L;
 	}
 
 	public int getTheMove() {
@@ -41,7 +40,7 @@ public class BestMove {
 	public int go( ) {
 		if(board0.getStatus() >= 82) return -1;
 		this.theMove = -1;
-		if(AIlevel<=0) {
+		if(AIlevel<=1) {
 		// random play, for testing
 			java.util.Random RANG = new java.util.Random();
 			int n = RANG.nextInt(82-board0.getStatus());
@@ -56,23 +55,23 @@ public class BestMove {
 				Thread.sleep(1500);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AIlevel==1) {
+		else if(AIlevel==2) {
 		// max next move score
 			AIlevel1();
 			try {
 				Thread.sleep(1000);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AIlevel==2) {  // more like level 1.5
+		else if(AIlevel==3) {  // more like level 1.5
 		// find potential scores
 			AIlevel1();
 		// think forward 1 more step
 			AIlevel2();
 			try {
-				Thread.sleep(900);  // insert some delay for testing
+				Thread.sleep(800);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else if(AIlevel>=3) {
+		else if(AIlevel>=4) {
 		// find potential scores
 			AIlevel1();
 		// minimize score-giveaway
