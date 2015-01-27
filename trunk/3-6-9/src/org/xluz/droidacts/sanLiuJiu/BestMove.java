@@ -11,7 +11,7 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
  */
 
 
-public class BestMove {
+class BestMove {
 	final static int MAX_AI_Level = 4;
 	private GamePlay board0;
 	private int theMove, AIlevel;
