@@ -57,7 +57,7 @@ public class GameBoard extends TextView {
 	    gameState = -1;
 	}
 	
-	 @Override 
+	@Override 
 	public void onDraw (Canvas canvas) {
 		float xx=getMeasuredWidth();
 		float yy=getMeasuredHeight();
@@ -120,16 +120,16 @@ public class GameBoard extends TextView {
 		super.onDraw(canvas);
 	}
 
-	 @Override
-	 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		 // Set the measured dimensions by figuring out the shortest boundary,
-		 // height or width.
-		 int measuredWidth = measure(widthMeasureSpec);
-		 int measuredHeight = measure(heightMeasureSpec);
-		 int d = Math.min(measuredWidth, measuredHeight);
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		// Set the measured dimensions by figuring out the shortest boundary,
+		// height or width.
+		int measuredWidth = measure(widthMeasureSpec);
+		int measuredHeight = measure(heightMeasureSpec);
+		int d = Math.min(measuredWidth, measuredHeight);
 
-		 setMeasuredDimension(d, d);
-	 }
+		setMeasuredDimension(d, d);
+	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
