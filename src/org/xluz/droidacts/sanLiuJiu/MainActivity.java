@@ -50,6 +50,7 @@ public class MainActivity extends Activity {
 		menu.add(0, 0, 0,"Intro");
 		menu.add(0, 1, 1, "1-player game");
 		menu.add(0, 2, 2, "2-player game");
+		//menu.add (0, 3, 3, "Settings");
 	}
 
     private boolean MenuChoice(MenuItem item) { 
@@ -107,13 +108,20 @@ public class MainActivity extends Activity {
 		s2 = (TextView)findViewById(R.id.textView3);
         settingsPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }	
+	
+	
+	
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		// make sure all the views are refreshed?
-		if(this.debugMsg > 0)
-			bd.setText(R.string.msg_release);
+//		if(G0 != null) {
+//			s1.setText(Integer.toString(G0.scores1));
+//			s2.setText(Integer.toString(G0.scores2));
+////			s1.invalidate();
+////			s2.invalidate();
+//		}
 	}
 	
 	@Override
@@ -124,10 +132,7 @@ public class MainActivity extends Activity {
 				// check game mode and restore gameSettings
 				this.gameSettings = s;
 				if(savedInstanceState.containsKey("GameProgression")) {
-					if(s>0 && (s/32)%2==0)
-						G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
-					else
-						G0 = new GamePlay0(savedInstanceState.getIntArray("GameProgression"));
+					G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
 					bd.setGame0(G0);
 					bd.setGameState(s);
 					if(this.debugMsg > 0)
@@ -183,54 +188,33 @@ public class MainActivity extends Activity {
 			if(s == 0) {
 				
 			}
-			else if(s == 1) {
-				// initial display
-				p1.setBackgroundColor(0xFFFFFF66);
-				p2.setBackgroundColor(Color.WHITE);
-			}
-			else if(bd.getGameState()>0 && G0.huseturn==0) {
-				// highlight player-2
-				p2.setBackgroundColor(0xFFFFFF66);
+			else if(G0.huseturn == 0) {
 				p1.setBackgroundColor(Color.WHITE);
 				// update scores
 				s1.setText(Integer.toString(G0.scores1));
 				s2.setText(Integer.toString(G0.scores2));
-				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p1.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
-				} else {  // original rules
-					if(G0.movesScore[s-1] > 0) {
-						tt.setText(p2.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
-					} else {
-						tt.setText(" ");
-					}
-				}
+				tt.setText(p1.getText()+" scores +"+Integer.toString(G0.movesScore[s-1])); 
+				// highlight player-2
+				p2.setBackgroundColor(0xFFFFFF66);
 				if(bd.getGameState()>0 && bd.getGameState()<64) {  // vs. AI
 					bd.setGameState(bd.getGameState()+1024);
 					dispatchAI(G0.movesSeq);
 				}
 			}
-			else if(bd.getGameState()>0 && G0.huseturn==1) {
+			else if(G0.huseturn == 1) {
 				// highlight player-1
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
 				// update scores
 				s1.setText(Integer.toString(G0.scores1));
 				s2.setText(Integer.toString(G0.scores2));
-				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p2.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
-				} else {  // original rules
-					if(G0.movesScore[s-1] > 0) {
-						tt.setText(p1.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
-					} else {
-						tt.setText(" ");
-					}
-				}
+				tt.setText(p2.getText()+" scores +"+Integer.toString(G0.movesScore[s-1])); 
 			}
 			if(s > 81) {
+				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 				p1.setBackgroundColor(0x00FFFFFF);
 				p2.setBackgroundColor(0x00FFFFFF);
 				bd.setGameState(0);
-				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -276,14 +260,11 @@ public class MainActivity extends Activity {
 		} else { // 2 or more players
 			gameSettings = 64;
 		}
-		if(settingsPrefs.getBoolean("oldRules", false)) {
+		if(settingsPrefs.getBoolean("oldRules", true)) {
 			gameSettings += 32;
 		}
-		if(gameSettings >= 96) {  // old rules 2 players
-			G0 = new GamePlay0();
-		} else {
-			G0 = new GamePlay();
-		}
+
+		G0 = new GamePlay();
 		G0.recordMove((int)(101+Tnow));
 		bd.setGame0(G0);
 		bd.setGameState(gameSettings);
