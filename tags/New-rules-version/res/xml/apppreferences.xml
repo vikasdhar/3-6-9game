@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Game mode" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="oldRules"
+            android:title="Original game rules" />
+
+        <ListPreference
+            android:defaultValue="2"
+            android:dialogTitle="Are you smarter than ..."
+            android:entries="@array/LevelsDifficulty"
+            android:entryValues="@array/nlevel"
+            android:key="LevelsOfDifficulty"
+            android:summary="Are you smarter than ?"
+            android:title="Levels of difficulty" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Players" >
+        <EditTextPreference
+            android:key="P1name"
+            android:title="Player 1&apos;s name" 
+            android:defaultValue="Player 1"/>
+        
+        <EditTextPreference
+            android:key="P2name"
+            android:title="Player 2&apos;s name" 
+            android:defaultValue="Player 2"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

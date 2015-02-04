@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="intro">Introduction</string>    
+<string name="instruction">Players take turns (double) tap a square on the board to mark it. Make rows, columns, or diagonals of exactly 3, 6, or 9 squares to score. Highest score wins.</string>    
+<string name="app_name">3&#8211;6&#8211;9</string>
+<string name="action_settings">Settings</string>
+<string name="about_app">About</string>
+<string name="hello_world">Start a new game with the menu</string>
+<string name="msg_about">About</string>
+<string name="msg_release">GPL release version 0.1</string>
+<string name="msg_copyr">© 2014 Cecil Cheung</string>
+<string name="msg_desc">A simple board game to test your wits. See http://3-6-9game.googlecode.com/\n© 2014 Cecil Cheung\n</string>
+<string name="Pname_logic">Logic</string>
+    
+<string-array name="nlevel">
+  <item>1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+</string-array>
+<string-array name="LevelsDifficulty">
+  <item>Goldfish?</item>
+  <item>T-Rex?</item>
+  <item>Fifth Grader?</item>
+  <item>The Logic?</item>
+</string-array>
+
+</resources>
