@@ -167,7 +167,7 @@ public class MainActivity extends Activity {
 		if(bd.getGameState()>=0 && G0!=null) {
 			outState.putInt("GameMode", bd.getGameState());
 			//outState.putInt("GameState", G0.getStatus());
-			if(G0.getStatus()<82) G0.movesSeq[G0.getStatus()] = -1;  // mark end of seq.
+			if(G0.getStatus()<82) G0.movesSeq[G0.getStatus()] = -1;  // mark end of seq. may not need
 			outState.putIntArray("GameProgression", G0.movesSeq);
 			outState.putCharSequence("P1Name8", p1.getText());
 			outState.putCharSequence("P2Name8", p2.getText());
@@ -193,13 +193,13 @@ public class MainActivity extends Activity {
 				p2.setBackgroundColor(0xFFFFFF66);
 				p1.setBackgroundColor(Color.WHITE);
 				// update scores
-				s1.setText(Integer.toString(G0.scores1));
-				s2.setText(Integer.toString(G0.scores2));
+				s1.setText(Integer.toString(G0.getScores(1)));
+				s2.setText(Integer.toString(G0.getScores(2)));
 				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p1.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
+					tt.setText(p1.getText()+" +"+Integer.toString(G0.getLastscore()));
 				} else {  // original rules
-					if(G0.movesScore[s-1] > 0) {
-						tt.setText(p2.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
+					if(G0.getLastscore() > 0) {
+						tt.setText(p2.getText()+" +"+Integer.toString(G0.getLastscore()));
 					} else {
 						tt.setText(" ");
 					}
@@ -214,13 +214,13 @@ public class MainActivity extends Activity {
 				p1.setBackgroundColor(0xFFFFFF66);
 				p2.setBackgroundColor(Color.WHITE);
 				// update scores
-				s1.setText(Integer.toString(G0.scores1));
-				s2.setText(Integer.toString(G0.scores2));
+				s1.setText(Integer.toString(G0.getScores(1)));
+				s2.setText(Integer.toString(G0.getScores(2)));
 				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p2.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
+					tt.setText(p2.getText()+" +"+Integer.toString(G0.getLastscore()));
 				} else {  // original rules
-					if(G0.movesScore[s-1] > 0) {
-						tt.setText(p1.getText()+" +"+Integer.toString(G0.movesScore[s-1]));
+					if(G0.getLastscore() > 0) {
+						tt.setText(p1.getText()+" +"+Integer.toString(G0.getLastscore()));
 					} else {
 						tt.setText(" ");
 					}
@@ -240,9 +240,13 @@ public class MainActivity extends Activity {
 	private void dispatchAI(final int[] gameMoves) {
 		new Thread(new Runnable(){
 			public void run() {
-				final BestMove nextMov = new BestMove(gameMoves);
+				final BestMove nextMov;
+				if((gameSettings/32)%2 == 0) 
+					nextMov = new BestMove(gameMoves);
+				else
+					nextMov = new BestMove0(gameMoves);
 				nextMov.setAIlevel(gameSettings%16);
-				nextMov.go();// inf loop if level out-of-range
+				nextMov.go();
 				bd.post(new Runnable(){
 					public void run() {
 						int m = nextMov.getTheMove();
@@ -253,6 +257,7 @@ public class MainActivity extends Activity {
 							bd.setGameState(bd.getGameState()-1024);
 						} else {
 							// no move? surrender?
+							bd.setText("No move found");
 						}
 					// send a fake touch event to trigger the main UI
 						dispatchTouchEvent(MotionEvent.obtain(
@@ -278,8 +283,8 @@ public class MainActivity extends Activity {
 		}
 		if(settingsPrefs.getBoolean("oldRules", false)) {
 			gameSettings += 32;
-		}
-		if(gameSettings >= 96) {  // old rules 2 players
+//		}
+//		if(gameSettings >= 96) {  // old rules 2 players
 			G0 = new GamePlay0();
 		} else {
 			G0 = new GamePlay();
@@ -288,8 +293,8 @@ public class MainActivity extends Activity {
 		bd.setGame0(G0);
 		bd.setGameState(gameSettings);
 		// reset scores
-		s1.setText(Integer.toString(G0.scores1));
-		s2.setText(Integer.toString(G0.scores2));
+		s1.setText(Integer.toString(G0.getScores(1)));
+		s2.setText(Integer.toString(G0.getScores(2)));
 		p1.setBackgroundColor(Color.WHITE);
 		p2.setBackgroundColor(Color.WHITE);
 		p1.setText(sTrimTo8(settingsPrefs.getString("P1name", "P1")));

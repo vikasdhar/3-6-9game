@@ -9,11 +9,10 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
 
 class GamePlay {
-	protected int cstatus;
+	protected int cstatus, huseturn;
 	int[] movesSeq; // cell=row*9+col
 	int[][] board;  // 0: empty, -1: selected, 1: occupied
 	int[] movesScore;
-	int huseturn;
 	int scores1, scores2;
 	int scoringMoveCs, scoringMoveCe, scoringMoveRs, scoringMoveRe;
 	int scoringMoveD0s, scoringMoveD0e, scoringMoveD1s, scoringMoveD1e;
@@ -76,6 +75,22 @@ class GamePlay {
 		return cstatus;
 	}
 
+	public int getScores(int n) {
+		if(n == 1) 
+			return scores1;
+		else if(n == 2) 
+			return scores2;
+		else 
+			return 0;
+	}
+	
+	public int getLastscore() {
+		if(cstatus > 1) 
+			return movesScore[cstatus-1];
+		else
+			return -1;
+	}
+	
 	public int recordMove(int m) {
 		if(cstatus > 81) return -1; // bounds checks
 		movesSeq[cstatus] = m;

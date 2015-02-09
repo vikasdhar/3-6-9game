@@ -11,36 +11,13 @@ class GamePlay0 extends GamePlay {
 	//private int cstatus;
 	
 	public GamePlay0() {
-		cstatus = 0;
+		super();
 		huseturn = 1;
-		scores1 = scores2 = 0;
-		movesScore = new int[82];
-		movesSeq = new int[82];
-		board = new int[9][9];
-		for(int i=0; i < 81; i++) {
-			movesSeq[i+1] = -1;
-			board[i/9][i%9] = 0;
-		}
-		scoringMoveCs = scoringMoveCe = -1; 
-		scoringMoveRs = scoringMoveRe = -1;
-		scoringMoveD0s = scoringMoveD0e = -1; 
-		scoringMoveD1s = scoringMoveD1e = -1;
 	}
 
 	public GamePlay0(int[] seq) {
-		scoringMoveCs = scoringMoveCe = -1; 
-		scoringMoveRs = scoringMoveRe = -1;
-		scoringMoveD0s = scoringMoveD0e = -1; 
-		scoringMoveD1s = scoringMoveD1e = -1;
+		//super();
 		huseturn = 1;
-		scores1 = scores2 = 0;
-		movesScore = new int[82];
-		this.movesSeq = new int[82];
-		board = new int[9][9];
-		for(int i=0; i < 81; i++) {
-			board[i/9][i%9] = 0;
-			this.movesSeq[i+1] = -1;
-		}
 		try {
 			this.movesSeq[0] = seq[0];
 			for(cstatus=1; cstatus<82; cstatus++) {

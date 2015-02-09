@@ -21,7 +21,7 @@ public class GameBoard extends TextView {
 	private Paint cursorPaint, markPaint;
 	private Paint linePaint, scorPaint;
 	private int curCol, curRow, gameState;
-	GamePlay game0;
+	private GamePlay game0;
 	
 	public GameBoard (Context context) {
 		super (context);
@@ -214,7 +214,6 @@ public class GameBoard extends TextView {
 		return gameState;
 	}
 	
-
 }
 
 

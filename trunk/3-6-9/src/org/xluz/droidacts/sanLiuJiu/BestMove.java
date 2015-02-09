@@ -16,6 +16,11 @@ class BestMove {
 	private GamePlay board0;
 	private int theMove, AIlevel;
 
+	public BestMove() {
+		this.AIlevel = 0;
+		this.theMove = -1;
+	}
+
 	public BestMove(int[] moves) {
 		board0 = new GamePlay(moves);
 		this.AIlevel = 0;
