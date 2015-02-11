@@ -204,6 +204,7 @@ public class MainActivity extends Activity {
 						tt.setText(" ");
 					}
 				}
+				// if 1-player game 
 				if(bd.getGameState()>0 && bd.getGameState()<64) {  // vs. AI
 					bd.setGameState(bd.getGameState()+1024);
 					dispatchAI(G0.movesSeq);
@@ -229,6 +230,8 @@ public class MainActivity extends Activity {
 			if(s > 81) {
 				p1.setBackgroundColor(0x00FFFFFF);
 				p2.setBackgroundColor(0x00FFFFFF);
+				s1.setText(Integer.toString(G0.getScores(1)));
+				s2.setText(Integer.toString(G0.getScores(2)));
 				bd.setGameState(0);
 				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 			}
@@ -297,11 +300,12 @@ public class MainActivity extends Activity {
 		s2.setText(Integer.toString(G0.getScores(2)));
 		p1.setBackgroundColor(Color.WHITE);
 		p2.setBackgroundColor(Color.WHITE);
-		p1.setText(sTrimTo8(settingsPrefs.getString("P1name", "P1")));
+		p1.setText(sTrimTo9(settingsPrefs.getString("P1name", "P1")));
+		String[] AInames = getResources().getStringArray(R.array.LevelsDifficulty);
 		if(mode == 1)
-			p2.setText(R.string.Pname_logic);
+			p2.setText(AInames[gameSettings%16-1]);
 		else
-			p2.setText(sTrimTo8(settingsPrefs.getString("P2name", "P2")));
+			p2.setText(sTrimTo9(settingsPrefs.getString("P2name", "P2")));
 
 		if(this.debugMsg > 0)
 			bd.setText("Game starts: " + Integer.toString(G0.movesSeq[0]));
@@ -312,11 +316,11 @@ public class MainActivity extends Activity {
 				);
 	}
 
-	private String sTrimTo8(String s0) {
+	private String sTrimTo9(String s0) {
 		String s = s0.trim();
 		int l = s.length();
-		if(l < 9) return s;
-		else return s.substring(0, 8);
+		if(l < 10) return s;
+		else return s.substring(0, 9);
 	}
 	
 }
