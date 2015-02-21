@@ -10,6 +10,7 @@ This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
  */
 
+@SuppressWarnings("unused")
 
 class BestMove {
 	final static int MAX_AI_Level = 4;
@@ -57,14 +58,14 @@ class BestMove {
 				}
 			}
 			try {
-				Thread.sleep(1500);  // insert some delay for testing
+				Thread.sleep(1100);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
 		else if(AIlevel==2) {
 		// max next move score
 			AIlevel1();
 			try {
-				Thread.sleep(1000);  // insert some delay for testing
+				Thread.sleep(800);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
 		else if(AIlevel==3) {  // more like level 1.5
@@ -73,7 +74,7 @@ class BestMove {
 		// think forward 1 more step
 			AIlevel2();
 			try {
-				Thread.sleep(800);  // insert some delay for testing
+				Thread.sleep(700);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
 		else if(AIlevel>=4) {
@@ -141,10 +142,12 @@ class BestMove {
 				if(mngiveaway > mnsc) {
 					mngiveaway = mnsc;
 					this.theMove = n;
-					Log.d("AI2-b", "Turn:"+Integer.toString(board0.getStatus())+
-							", theMove->"+Integer.toString(n)+
-							", giveaway="+Integer.toString(mnsc)+
-							", score="+Integer.toString(mxsc));
+					if(myDebugLevel.Msg > 1) {
+						Log.d("AI2-b", "Turn:"+Integer.toString(board0.getStatus())+
+								", theMove->"+Integer.toString(n)+
+								", giveaway="+Integer.toString(mnsc)+
+								", score="+Integer.toString(mxsc));
+					}
 				}
 				board0.board[n/9][n%9] = mxsc;
 			}
@@ -171,5 +174,6 @@ class BestMove {
 			if(n>80) n = 0;
 		}		
 	}
+	
 	
 }

@@ -10,9 +10,11 @@ This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
 
+@SuppressWarnings("unused")
+
 class BestMove0 extends BestMove {
 	private GamePlay0 board0;
-	private int theMove;
+	private int theMove, scoringFlag;
 	private int HiP[];
 	//private int theMoves[];
 
@@ -31,55 +33,76 @@ class BestMove0 extends BestMove {
 	@Override
 	public int go() {
 		this.theMove = -1;
-		if(super.getAIlevel() <= 0 || board0.getStatus() <= 6) {
-		// random play, for testing
-			java.util.Random RANG = new java.util.Random();
-			int n = RANG.nextInt(82-board0.getStatus());
-			for(int i=0; i<81; i++) {
-				if(board0.board[i/9][i%9] == 0) n--;
-				if(n<0) {
-					theMove = i;
-					break;
-				}
+		if(super.getAIlevel() == 1) {
+			if(System.currentTimeMillis()%4 == 0) {  // about 1 in 4 chances
+				this.theMove = AI0randomPlay();
+			}
+			else {
+				AI1985a();
 			}
 			try {
-				Thread.sleep(900);  // insert some delay for testing
+				Thread.sleep(800);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 		}
-		else {
+		else if(super.getAIlevel() == 2) {
 			AI1985a();
 			try {
 				Thread.sleep(1000);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 			
 		}
+		else if(super.getAIlevel() == 3) {
+			AI1985a();
+			if(this.scoringFlag == 6) AI1985b();
+			try {
+				Thread.sleep(500);  // insert some delay for testing
+			} catch (InterruptedException e) {}
+			
+		}
+		else if(super.getAIlevel() == 4) {
+			AI1985a();
+			AI1985b();
+			try {
+				Thread.sleep(1000);  // insert some delay for testing
+			} catch (InterruptedException e) {}
+			
+		}
+		else {
+			this.theMove = AI0randomPlay();
+			try {
+				Thread.sleep(600);  // insert some delay for testing
+			} catch (InterruptedException e) {}			
+		}
 		return theMove;
 	}
 
 /* Rewrite of the original 1985 algorithm
- * 
+ * part A
  */
 	private void AI1985a() {
 		int ptsGive[] = new int[81];
 		findpts();
-		Log.d("AI1985", "Rnd1: "+Integer.toString(HiP[0])+
-				", "+Integer.toString(HiP[1])+
-				", "+Integer.toString(HiP[2])+
-				", "+Integer.toString(HiP[3]));
+		if(myDebugLevel.Msg > 1) {
+			Log.d("AI1985", "Rnd0: "+Integer.toString(HiP[0])+
+					", "+Integer.toString(HiP[1])+
+					", "+Integer.toString(HiP[2]));
+		}
 		if(HiP[0] < 0) {  // board is full??
-
+			this.scoringFlag = -1;
 		}
 		else if(HiP[2] < 0) {  // only one hi pt move
+			this.scoringFlag = 1;
 			this.theMove = HiP[1];
 		}
 		else if(HiP[0] == 0) { // multiple 0 pt moves
+			this.scoringFlag = 2;
 			for(int n=0; n<81; n++) {
 				ptsGive[n] = 999;
 				if(board0.board[n/9][n%9] > 0) continue;
 				board0.board[n/9][n%9] = 100;
 				findpts();
 				if(HiP[0] > 0) {
-					//remove conflicting & add all pts
+					//remove conflicting moves & add all pts
 					int s, i, j;
 					ptsGive[n] = 0;
 					for(i=0; i<9; i++) for(j=0; j<9; j++) {
@@ -113,13 +136,33 @@ class BestMove0 extends BestMove {
 				}
 			}
 		}
-		else if(HiP[0] > 0) {  // multiple positive pt moves
-			this.theMove = HiP[1];
-			//max the potential scores...
-			
+		else if(HiP[0] > 0) {  // multiple high pts moves
+		// needs to flag this case for higher AIlevel
+			this.scoringFlag = 6;
+			int n=1;
+			while(System.currentTimeMillis()%8 != 0) {
+				n++;
+				if(HiP[n] < 0) n = 1;
+			}
+			this.theMove = HiP[n];
 		}
 	}
 	
+/* Rewrite of the original 1985 algorithm
+ * part B: maximize forward points
+ */
+	private void AI1985b() {
+	// after a call to 1985a
+		findpts(); // this should reset the board and HiP[]
+		if(HiP[0] > 0 && HiP[2] >= 0) {  // multiple positive pt moves
+			//max the potential scores...
+			this.theMove = HiP[2];
+		}		
+	}
+	
+/* Find all the scoring moves and the highest point moves
+ * 
+ */
 	private void findpts() {
 		int n=1, sc;
 		HiP[0] = -1;
@@ -141,6 +184,19 @@ class BestMove0 extends BestMove {
 				}
 			}
 		}
-		
 	}
+	
+	private int AI0randomPlay() {
+	// random play, for testing purposes
+		java.util.Random RANG = new java.util.Random();
+		int i, n = RANG.nextInt(82-board0.getStatus());
+		for(i=0; i<81; i++) {
+			if(board0.board[i/9][i%9] < 1) n--;
+			if(n < 0) {
+				break;
+			}
+		}
+		return i;
+	}
+	
 }
