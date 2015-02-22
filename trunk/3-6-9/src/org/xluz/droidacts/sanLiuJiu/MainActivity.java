@@ -128,25 +128,25 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		if(savedInstanceState!=null) {
-			int s = savedInstanceState.getInt("GameMode", -1);
+			int s = savedInstanceState.getInt(SAVEGAMEKEY_MODE, -1);
 			if(s>=0 && s<2048) {
 				// check game mode and restore gameSettings
 				this.gameSettings = s;
-				if(savedInstanceState.containsKey("GameProgression")) {
+				if(savedInstanceState.containsKey(SAVEGAMEKEY_MOVES)) {
 					if((s/32)%2 == 0)
-						G0 = new GamePlay(savedInstanceState.getIntArray("GameProgression"));
+						G0 = new GamePlay(savedInstanceState.getIntArray(SAVEGAMEKEY_MOVES));
 					else
-						G0 = new GamePlay0(savedInstanceState.getIntArray("GameProgression"));
+						G0 = new GamePlay0(savedInstanceState.getIntArray(SAVEGAMEKEY_MOVES));
 					bd.setGame0(G0);
 					bd.setGameState(s);
 					if(myDebugLevel.Msg > 0)
 						bd.setText("Game resumed: "+Integer.toString(G0.movesSeq[0]));
 				// need to restore player names
-					if(savedInstanceState.containsKey("P1Name9")) {	
-						p1.setText(savedInstanceState.getCharSequence("P1Name9"));
+					if(savedInstanceState.containsKey(SAVEGAMEKEY_NAME1)) {	
+						p1.setText(savedInstanceState.getCharSequence(SAVEGAMEKEY_NAME1));
 					}
-					if(savedInstanceState.containsKey("P2Name9")) {
-						p2.setText(savedInstanceState.getCharSequence("P2Name9"));
+					if(savedInstanceState.containsKey(SAVEGAMEKEY_NAME2)) {
+						p2.setText(savedInstanceState.getCharSequence(SAVEGAMEKEY_NAME2));
 					}
 				// trigger the event handler
 					dispatchTouchEvent(MotionEvent.obtain(
@@ -167,11 +167,6 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		if(bd.getGameState()>=0 && G0!=null) {
 			if(bd.getGameState() > 0)
@@ -188,9 +183,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStop() {
-		if(bd.getGameState()>=0 && G0!=null) {
+		//if(bd.getGameState()>=0 && G0!=null) {
 			saveGameProgress();
-		}
+		//}
 		super.onStop();
 	}
 
@@ -346,7 +341,7 @@ public class MainActivity extends Activity {
 		} else {
 			// invalid game settings or progress
 			if(myDebugLevel.Msg > 0)
-				bd.setText("No game to resume.");
+				bd.setText("No game to resume!");
 		}
 		return s;
 	}
