@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 	GameBoard bd;
 	GamePlay G0;
 	private TextView p1, p2, s1, s2, tt;
+	private int UIoptions=0;
 	private int gameSettings=0;
 	/* 0: no game in progress
 	 * lowest 4 bits: AI level 1 to 15
@@ -44,21 +45,28 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
       // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        CreateMenu(menu);
+      // other menu items
+		menu.add(0, 1, 1, "1-player game");
+		menu.add(0, 2, 2, "2-player game");
+		menu.add(0, 3, 3, "Resume last game");
+		menu.add(0, 4, 4,"Send game");
         return true;
     }
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(UIoptions/16%2 == 1) {
+			menu.findItem(4).setVisible(true);
+		} else {
+			menu.findItem(4).setVisible(false);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		return MenuChoice(item);
-	}
-
-    private void CreateMenu(Menu menu) {
-		menu.add(0, 4, 4,"Send game");
-		menu.add(0, 1, 1, "1-player game");
-		menu.add(0, 2, 2, "2-player game");
-		menu.add(0, 3, 3, "Resume last game");
 	}
 
     private boolean MenuChoice(MenuItem item) { 
@@ -69,7 +77,7 @@ public class MainActivity extends Activity {
 //			introDialog.setMessage(R.string.instruction);
 //			introDialog.setPositiveButton("OK", null);
         	introDialog.setTitle(R.string.send_game);
-        	introDialog.setMessage("We love to examine your last game. Could you email us the games moves?");
+        	introDialog.setMessage(R.string.msg_emailgame);
         	introDialog.setNegativeButton("Cancel", null);
         	introDialog.setPositiveButton("Send", new OnClickListener() {
         		public void onClick(DialogInterface dialog, int arg1) {
@@ -213,8 +221,10 @@ public class MainActivity extends Activity {
 				s1.setText(Integer.toString(G0.getScores(1)));
 				s2.setText(Integer.toString(G0.getScores(2)));
 				saveGameProgress();
-				if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2))
+				if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2)) {
 					Toast.makeText(this, R.string.msg_winlogic,	Toast.LENGTH_LONG).show();
+					UIoptions += 16;
+				}
 				else
 					Toast.makeText(this, R.string.msg_gameend, Toast.LENGTH_LONG).show();
 				bd.setGameState(0);
