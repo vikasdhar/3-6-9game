@@ -16,13 +16,14 @@ class BestMove0 extends BestMove {
 	private GamePlay0 board0;
 	private int theMove, scoringFlag;
 	private int HiP[];
-	//private int theMoves[];
+	private int theMoves[];
 
 	public BestMove0(int[] moves) {
 		//super();
 		board0 = new GamePlay0(moves);
 		this.theMove = -1;
 		HiP = new int[83];    // [0] stores hi pt, then the locations
+		theMoves = new int[80]; 
 	}
 
 	@Override
@@ -60,10 +61,10 @@ class BestMove0 extends BestMove {
 			
 		}
 		else if(super.getAIlevel() == 4) {
-			AI1985a();
-			AI1985b();
+			// New algorithm
+			AI2015a();
 			try {
-				Thread.sleep(1000);  // insert some delay for testing
+				Thread.sleep(500);  // insert some delay for testing
 			} catch (InterruptedException e) {}
 			
 		}
@@ -199,4 +200,14 @@ class BestMove0 extends BestMove {
 		return i;
 	}
 	
+	private void AI2015a() {
+		if(theMoves[0] > 0) {
+			this.theMove = theMoves[theMoves[0]];
+			theMoves[0]++;
+			if(theMoves[theMoves[0]] < 0) theMoves[0] = 0;
+		}
+		else {
+			this.theMove = AI0randomPlay(); //temporary
+		}
+	}
 }

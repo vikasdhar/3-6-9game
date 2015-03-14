@@ -8,7 +8,11 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
 
 import java.io.*;
+import java.util.Scanner;
+import android.util.Log;
 import android.os.Bundle;
+import android.content.DialogInterface.*;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
@@ -28,6 +32,7 @@ public class MainActivity extends Activity {
 	private int gameSettings=0;
 	/* 0: no game in progress
 	 * lowest 4 bits: AI level 1 to 15
+	 * bit 4: 
 	 * bit 5: original rules
 	 * bit 6: 2-player
 	 * bit 9:
@@ -50,7 +55,7 @@ public class MainActivity extends Activity {
 	}
 
     private void CreateMenu(Menu menu) {
-		menu.add(0, 0, 0,"Intro");
+		menu.add(0, 4, 4,"Send game");
 		menu.add(0, 1, 1, "1-player game");
 		menu.add(0, 2, 2, "2-player game");
 		menu.add(0, 3, 3, "Resume last game");
@@ -58,11 +63,19 @@ public class MainActivity extends Activity {
 
     private boolean MenuChoice(MenuItem item) { 
         switch (item.getItemId()) {
-        case 0:
+        case 4:
         	AlertDialog.Builder introDialog = new AlertDialog.Builder(this);
-			introDialog.setTitle(R.string.intro);
-			introDialog.setMessage(R.string.instruction);
-			introDialog.setPositiveButton("OK", null);
+//			introDialog.setTitle(R.string.intro);
+//			introDialog.setMessage(R.string.instruction);
+//			introDialog.setPositiveButton("OK", null);
+        	introDialog.setTitle(R.string.send_game);
+        	introDialog.setMessage("We love to examine your last game. Could you email us the games moves?");
+        	introDialog.setNegativeButton("Cancel", null);
+        	introDialog.setPositiveButton("Send", new OnClickListener() {
+        		public void onClick(DialogInterface dialog, int arg1) {
+        			mailGameProgress();
+        		}
+        	});
 			introDialog.show();
             return true;
         case 1:
@@ -199,8 +212,12 @@ public class MainActivity extends Activity {
 				p2.setBackgroundColor(0x00FFFFFF);
 				s1.setText(Integer.toString(G0.getScores(1)));
 				s2.setText(Integer.toString(G0.getScores(2)));
+				saveGameProgress();
+				if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2))
+					Toast.makeText(this, R.string.msg_winlogic,	Toast.LENGTH_LONG).show();
+				else
+					Toast.makeText(this, R.string.msg_gameend, Toast.LENGTH_LONG).show();
 				bd.setGameState(0);
-				Toast.makeText(this, "Game ended", Toast.LENGTH_LONG).show();
 			}
 			if(s == 0) {
 				
@@ -281,13 +298,13 @@ public class MainActivity extends Activity {
 				outob.flush();
 				outob.close();
 			} catch (Exception e) {
-				//Log.d("savedGame","Error in saving game to internal file");
-				e.printStackTrace();
+				Log.d("savedGame","Error in saving game to internal file");
 			}
 		}
 		
 		SharedPreferences savedGame = getSharedPreferences(STATUS_STORAGE, Activity.MODE_PRIVATE);
 		SharedPreferences.Editor outxml = savedGame.edit();
+		
 		if(bd.getGameState() > 0)
 			outxml.putInt(SAVEGAMEKEY_MODE, bd.getGameState());
 		else
@@ -346,6 +363,27 @@ public class MainActivity extends Activity {
 		return s;
 	}
 	
+	void mailGameProgress() {
+		String mySavedGame;
+		File mySavedGameF = new File(getApplicationInfo().dataDir,"shared_prefs/"+STATUS_STORAGE+".xml");
+		if(myDebugLevel.Msg > 1)
+			Log.d("sendGame", mySavedGameF.getAbsolutePath());
+		try {
+			mySavedGame = new Scanner(mySavedGameF).useDelimiter("\\A").next();
+		} catch (FileNotFoundException e) {
+			mySavedGame = "";
+		}
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("message/rfc822");
+		i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"support@transluminance.com"});
+		i.putExtra(Intent.EXTRA_SUBJECT, "user game report");
+		i.putExtra(Intent.EXTRA_TEXT   , "<!- Game moves below: -->\n"+mySavedGame);
+		//i.putExtra(Intent.EXTRA_STREAM, mySavedGame.toURI());
+		//i.setData(Uri.parse("mailto:default@recipient.com"));
+		//i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(Intent.createChooser(i, "Send game progress"));
+	}
+
 	private void dispatchAI(final int[] gameMoves) {
 		new Thread(new Runnable(){
 			public void run() {
