@@ -1,9 +1,10 @@
 package org.xluz.droidacts.sanLiuJiu;
 
+import java.util.ArrayList;
 import android.util.Log;
 
 /* 
-Find the best move available under old rules
+Find the best move available under original rules
 
 Copyright (c) 2015 Cecil Cheung
 This software is released under the GNU General Public License version 3.
@@ -13,17 +14,18 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 @SuppressWarnings("unused")
 
 class BestMove0 extends BestMove {
+	public static final int MOVESLISTSIZ = 80;
 	private GamePlay0 board0;
 	private int theMove, scoringFlag;
-	private int HiP[];
-	private int theMoves[];
+	private int Lps[];
+	private static int[] theMoves = new int[MOVESLISTSIZ] ;
 
 	public BestMove0(int[] moves) {
 		//super();
 		board0 = new GamePlay0(moves);
 		this.theMove = -1;
-		HiP = new int[83];    // [0] stores hi pt, then the locations
-		theMoves = new int[80]; 
+		theMoves[0] = 0;
+		Lps = new int[MOVESLISTSIZ];    // [0] stores total pts, then the locations
 	}
 
 	@Override
@@ -34,37 +36,53 @@ class BestMove0 extends BestMove {
 	@Override
 	public int go() {
 		this.theMove = -1;
-		if(super.getAIlevel() == 1) {
+		if(theMoves[0] > 0) {        // previously found move sequence
+			this.theMove = theMoves[theMoves[0]];
+			theMoves[0]++;
+			if(theMoves[theMoves[0]] < 0) theMoves[0] = 0;
+			try {
+				Thread.sleep(1200);  // insert some delay so user can see the moves
+			} catch (InterruptedException e) {}
+			if(myDebugLevel.Mode) 
+				Log.d("moves seq","Move:"+Integer.toString(theMoves[0]));
+		}
+		else if(super.getAIlevel() == 1) {
+			long t0 = System.currentTimeMillis() + 1000;
 			if(System.currentTimeMillis()%4 == 0) {  // about 1 in 4 chances
 				this.theMove = AI0randomPlay();
 			}
 			else {
 				AI1985a();
 			}
-			try {
-				Thread.sleep(800);  // insert some delay for testing
+			try {    // so each move takes the same amount of time
+				while(System.currentTimeMillis() < t0) Thread.sleep(100);
 			} catch (InterruptedException e) {}
 		}
 		else if(super.getAIlevel() == 2) {
+			long t0 = System.currentTimeMillis() + 1200;
 			AI1985a();
+			t0 -= System.currentTimeMillis();
 			try {
-				Thread.sleep(1000);  // insert some delay for testing
+				if(t0 > 0) Thread.sleep(t0);  // each move takes the same amount of time
 			} catch (InterruptedException e) {}
 			
 		}
 		else if(super.getAIlevel() == 3) {
+			long t0 = System.currentTimeMillis() + 1500;
 			AI1985a();
 			if(this.scoringFlag == 6) AI1985b();
 			try {
-				Thread.sleep(500);  // insert some delay for testing
+				t0 -= System.currentTimeMillis();
+				if(t0 > 0) Thread.sleep(t0);
 			} catch (InterruptedException e) {}
 			
 		}
 		else if(super.getAIlevel() == 4) {
+			long t0 = System.currentTimeMillis() + 1800;
 			// New algorithm
 			AI2015a();
 			try {
-				Thread.sleep(500);  // insert some delay for testing
+				while(System.currentTimeMillis() < t0) Thread.sleep(200);
 			} catch (InterruptedException e) {}
 			
 		}
@@ -77,6 +95,39 @@ class BestMove0 extends BestMove {
 		return theMove;
 	}
 
+/* Find all the scoring moves
+ * 
+ */
+	private void findpts() {
+		Lps[1] = -1;
+		Lps[0] = 0;
+		int m=1, sc;
+		for(int i=0; i<81; i++) {
+			if(board0.board[i/9][i%9] < 1) {  // location not occupied
+				sc = board0.checkScores(i);
+				board0.board[i/9][i%9] = sc - 100;
+				if(sc > 0) {
+					Lps[0] += sc;
+					Lps[m] = i;
+					m++;
+					Lps[m] = -1;              // mark end of array
+				}
+//				if(HiP[0] == sc) {      // multiple highest points
+//					HiP[0] = sc;
+//					HiP[n] = i;
+//					n++;
+//					HiP[n] = -1;        // mark end of array
+//				}
+//				else if(HiP[0] < sc) {  // find highest points
+//					HiP[0] = sc;
+//					HiP[1] = i;
+//					HiP[2] = -1;        // mark end of array
+//					n = 2;
+//				}
+			}
+		}
+	}
+	
 /* Rewrite of the original 1985 algorithm
  * part A
  */
@@ -84,26 +135,21 @@ class BestMove0 extends BestMove {
 		int ptsGive[] = new int[81];
 		findpts();
 		if(myDebugLevel.Msg > 1) {
-			Log.d("AI1985", "Rnd0: "+Integer.toString(HiP[0])+
-					", "+Integer.toString(HiP[1])+
-					", "+Integer.toString(HiP[2]));
+			Log.d("AI1985", "Rnd0: "+Integer.toString(Lps[0])+
+					", "+Integer.toString(Lps[1])+
+					", "+Integer.toString(Lps[2]));
 		}
-		if(HiP[0] < 0) {  // board is full??
-			this.scoringFlag = -1;
-		}
-		else if(HiP[2] < 0) {  // only one hi pt move
-			this.scoringFlag = 1;
-			this.theMove = HiP[1];
-		}
-		else if(HiP[0] == 0) { // multiple 0 pt moves
+//		if(HiP[0] < 0) {  // board is full??
+//			this.scoringFlag = -1;
+//		}
+		if(Lps[0] == 0) { // multiple 0 point moves
 			this.scoringFlag = 2;
-			for(int n=0; n<81; n++) {
+			for(int n=0; n<81; n++) {  // set 1 location, find points given away
 				ptsGive[n] = 999;
 				if(board0.board[n/9][n%9] > 0) continue;
 				board0.board[n/9][n%9] = 100;
 				findpts();
-				if(HiP[0] > 0) {
-					//remove conflicting moves & add all pts
+				if(Lps[0] > 0) {       //remove conflicting moves & add all pts
 					int s, i, j;
 					ptsGive[n] = 0;
 					for(i=0; i<9; i++) for(j=0; j<9; j++) {
@@ -137,58 +183,159 @@ class BestMove0 extends BestMove {
 				}
 			}
 		}
-		else if(HiP[0] > 0) {  // multiple high pts moves
+		else if(Lps[2] >= 0) {  // multiple scoring moves
 		// needs to flag this case for higher AIlevel
 			this.scoringFlag = 6;
 			int n=1;
-			while(System.currentTimeMillis()%8 != 0) {
+			while(System.currentTimeMillis()%8 != 0) { //temporary
 				n++;
-				if(HiP[n] < 0) n = 1;
+				if(Lps[n] < 0) n = 1;
 			}
-			this.theMove = HiP[n];
+			this.theMove = Lps[n];
+		}
+		else {  // only one scoring move
+			this.scoringFlag = 1;
+			this.theMove = Lps[1];
 		}
 	}
 	
 /* Rewrite of the original 1985 algorithm
  * part B: maximize forward points
+ * use after a call to 1985a()
  */
 	private void AI1985b() {
-	// after a call to 1985a
-		findpts(); // this should reset the board and HiP[]
-		if(HiP[0] > 0 && HiP[2] >= 0) {  // multiple positive pt moves
-			//max the potential scores...
-			this.theMove = HiP[2];
-		}		
-	}
-	
-/* Find all the scoring moves and the highest point moves
- * 
- */
-	private void findpts() {
-		int n=1, sc;
-		HiP[0] = -1;
-		for(int i=0; i<81; i++) {
-			if(board0.board[i/9][i%9] < 1) {  // location not occupied
-				sc = board0.checkScores(i);
-				board0.board[i/9][i%9] = sc - 100;
-				if(HiP[0] == sc) {      // multiple highest points
-					HiP[0] = sc;
-					HiP[n] = i;
-					n++;
-					HiP[n] = -1;        // mark end of array
+		int Hp=0;
+		ArrayList<int[]> moveslists = new ArrayList<int[]>();
+		findpts();    // this should reset the board and Lps[]
+//		for(m=1; m<MOVESLISTSIZ; m++) {
+//			if(Lps[m] < 0) {
+//				m--;
+//				break;
+//			}
+//		}
+		if(Lps[2] < 0) {       // should not happen
+			this.theMove = Lps[1];
+			return;
+		}
+		else {
+		// resolve conflicting moves
+			moveslists.add(Lps.clone());
+			int n, m, p, m0 = 1;
+			for(n=0; n < moveslists.size(); n++) {
+				m = 1;
+				while(moveslists.get(n)[m] >= 0 && m < MOVESLISTSIZ);
+				m--;
+				for(int j=m0; j<m; j++) {
+					if(moveslists.get(n)[j] > 99) continue;
+					int[] L = moveslists.get(n);
+					p = board0.board[L[j]/9][L[j]%9];
+					board0.board[L[j]/9][L[j]%9] = 200;
+					for(int k=j+1; k<=m; k++) {
+						if(moveslists.get(n)[k] > 99) continue;
+						int s0=board0.board[L[k]/9][L[k]%9] + 100;
+						int s = board0.checkScores(L[k]);
+						if(s != s0) {
+							this.scoringFlag = 8;  // flag conflicting moves
+							// construct a new moves chain
+							int [] L0 = L.clone();
+							// mark the moves as conflicting
+							L0[k] += 100;
+							L[j] += 100;
+							moveslists.add(L0);
+							Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
+						}
+					}
+					board0.board[L[j]/9][L[j]%9] = p;
 				}
-				else if(HiP[0] < sc) {  // find highest points
-					HiP[0] = sc;
-					HiP[1] = i;
-					HiP[2] = -1;        // mark end of array
-					n = 2;
+			// apply current moves chain, append and re-do
+				int[] LL = moveslists.get(n);
+				for(int i=1; i<=m; i++) {
+					if(LL[i] > 99) continue;  // skip marked inactive moves
+					board0.board[LL[i]/9][LL[i]%9] = n+1000;
+				}
+				findpts();
+				if(Lps[0] > 0) {              // new scoring moves found
+					m0 = m+1;
+					for(int i=1; Lps[i] >= 0 && m+i < MOVESLISTSIZ-1; i++) {
+						LL[m+i] = Lps[i];
+						LL[m+i+1] = -1;
+					}
+					n--;         // force a re-do of current chain
+					Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
+				} else {         // clean up get ready to process next chain
+					for(int i=1; i<=m; i++) {
+						if(LL[i] > 99) continue;  // skip marked inactive moves
+						board0.board[LL[i]/9][LL[i]%9] = 0;
+					}
+					m0 = 1;
+				}
+			}
+			// find highest score
+			Hp = 0;
+			for(n=0; n < moveslists.size(); n++) {
+				int sc = 0;
+				moveslists.get(n)[0] = 0;
+				for(int i=1; moveslists.get(n)[i] >= 0 && i < MOVESLISTSIZ; i++) {
+					if(moveslists.get(n)[i] > 99) continue;
+					sc = board0.checkScores(moveslists.get(n)[i]);
+					board0.board[moveslists.get(n)[i]/9][moveslists.get(n)[i]%9] = n+1000;
+					if(sc > 0) moveslists.get(n)[0] += sc;
+					else break;
+				}
+				if(Hp < moveslists.get(n)[0]) {
+					Hp = moveslists.get(n)[0];
+				}
+				for(int i=0; i<9; i++) for(int j=0; j<9; j++) {
+					if(board0.board[i][j] == n+1000) board0.board[i][j] = 0;
+				}
+			}
+
+
+			if(this.scoringFlag < 8) {
+			// copy all scoring moves to theMoves[]
+				this.theMove = Lps[1];
+				theMoves = Lps.clone();
+				theMoves[0] = 2;
+			}
+			else {
+			// find highest scores chain, and copy to theMoves[]
+				for(n=0; n < moveslists.size(); n++) {
+					if(moveslists.get(n)[0] == Hp) {
+				Log.d("AI1985b","Moveslist: "+Integer.toString(n)
+						+" high score: "+Integer.toString(Hp));
+						for(int i=1, j=1; i < MOVESLISTSIZ; i++) {
+							if(moveslists.get(n)[i] > 99) continue;
+							theMoves[j] = moveslists.get(n)[i];
+							j++;
+							if(moveslists.get(n)[i] < 0) break;
+						}
+						this.theMove = theMoves[1];
+						theMoves[0] = 2;
+						break;
+					}
+				}
+			}
+			// assert valid moves; should not happen
+			if(this.theMove < 0 || this.theMove > 80)    // should not happen
+				this.theMove = -1;
+			else if(theMoves[2] < 0)                     // should not happen
+				theMoves[0] = 0;
+			else                                         // assert proper moves chain termination
+			for(int i=2; i < MOVESLISTSIZ; i++) {
+				if(theMoves[i] >= 0 || theMoves[i] < 81) continue;
+				else if(theMoves[i] < 0) break;
+				else {
+					theMoves[0] = 0;
+					break;
 				}
 			}
 		}
 	}
-	
+
+/* Random play, for testing purposes
+ * return a random open location
+ */
 	private int AI0randomPlay() {
-	// random play, for testing purposes
 		java.util.Random RANG = new java.util.Random();
 		int i, n = RANG.nextInt(82-board0.getStatus());
 		for(i=0; i<81; i++) {
@@ -200,6 +347,9 @@ class BestMove0 extends BestMove {
 		return i;
 	}
 	
+/* New algorithm
+ * 	
+ */
 	private void AI2015a() {
 		if(theMoves[0] > 0) {
 			this.theMove = theMoves[theMoves[0]];
