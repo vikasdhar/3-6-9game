@@ -13,8 +13,9 @@ See, for example, "http://www.gnu.org/licenses/gpl.html".
 
 @SuppressWarnings("unused")
 
-class BestMove0 extends BestMove {
-	public static final int MOVESLISTSIZ = 80;
+// making class for debugging purposes 
+public class BestMove0 extends BestMove {
+	public static final int MOVESLISTSIZ = 124;
 	private GamePlay0 board0;
 	private int theMove, scoringFlag;
 	private int Lps[];
@@ -24,7 +25,7 @@ class BestMove0 extends BestMove {
 		//super();
 		board0 = new GamePlay0(moves);
 		this.theMove = -1;
-		theMoves[0] = 0;
+		theMoves[0] = 0;                // [0] points to next move in the sequence
 		Lps = new int[MOVESLISTSIZ];    // [0] stores total pts, then the locations
 	}
 
@@ -186,12 +187,12 @@ class BestMove0 extends BestMove {
 		else if(Lps[2] >= 0) {  // multiple scoring moves
 		// needs to flag this case for higher AIlevel
 			this.scoringFlag = 6;
-			int n=1;
-			while(System.currentTimeMillis()%8 != 0) { //temporary
-				n++;
-				if(Lps[n] < 0) n = 1;
-			}
-			this.theMove = Lps[n];
+//			int n=1;
+//			while(System.currentTimeMillis()%8 != 0) { //temporary
+//				n++;
+//				if(Lps[n] < 0) n = 1;
+//			}
+			this.theMove = Lps[2];
 		}
 		else {  // only one scoring move
 			this.scoringFlag = 1;
@@ -205,7 +206,7 @@ class BestMove0 extends BestMove {
  */
 	private void AI1985b() {
 		int Hp=0;
-		ArrayList<int[]> moveslists = new ArrayList<int[]>();
+		ArrayList<int[]> moveslists = new ArrayList<int[]>(36);
 		findpts();    // this should reset the board and Lps[]
 //		for(m=1; m<MOVESLISTSIZ; m++) {
 //			if(Lps[m] < 0) {
@@ -220,18 +221,23 @@ class BestMove0 extends BestMove {
 		else {
 		// resolve conflicting moves
 			moveslists.add(Lps.clone());
-			int n, m, p, m0 = 1;
+			moveslists.get(0)[0] = 1;    // points to first move to examine
+			if(myDebugLevel.Msg > 1)
+				Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
+			int n, m, p, m0;
 			for(n=0; n < moveslists.size(); n++) {
 				m = 1;
-				while(moveslists.get(n)[m] >= 0 && m < MOVESLISTSIZ);
+				while(moveslists.get(n)[m] >= 0 && m < MOVESLISTSIZ) m++;
 				m--;
+				int[] L = moveslists.get(n);
+				m0 = L[0];
 				for(int j=m0; j<m; j++) {
-					if(moveslists.get(n)[j] > 99) continue;
-					int[] L = moveslists.get(n);
-					p = board0.board[L[j]/9][L[j]%9];
-					board0.board[L[j]/9][L[j]%9] = 200;
+					if(L[j] > 99) continue;
+					int Lp = L[j];
+					p = board0.board[Lp/9][Lp%9];
+					board0.board[Lp/9][Lp%9] = 200;
 					for(int k=j+1; k<=m; k++) {
-						if(moveslists.get(n)[k] > 99) continue;
+						if(L[k] > 99) continue;
 						int s0=board0.board[L[k]/9][L[k]%9] + 100;
 						int s = board0.checkScores(L[k]);
 						if(s != s0) {
@@ -241,11 +247,12 @@ class BestMove0 extends BestMove {
 							// mark the moves as conflicting
 							L0[k] += 100;
 							L[j] += 100;
+							L0[0] = m0;
 							moveslists.add(L0);
 							Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
 						}
 					}
-					board0.board[L[j]/9][L[j]%9] = p;
+					board0.board[Lp/9][Lp%9] = p;
 				}
 			// apply current moves chain, append and re-do
 				int[] LL = moveslists.get(n);
@@ -255,26 +262,29 @@ class BestMove0 extends BestMove {
 				}
 				findpts();
 				if(Lps[0] > 0) {              // new scoring moves found
+					Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
 					m0 = m+1;
+					LL[0] = m + 1;
 					for(int i=1; Lps[i] >= 0 && m+i < MOVESLISTSIZ-1; i++) {
 						LL[m+i] = Lps[i];
 						LL[m+i+1] = -1;
 					}
-					n--;         // force a re-do of current chain
-					Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
-				} else {         // clean up get ready to process next chain
+					n--;                      // force a re-do of current chain
+				} else {                      
+					// clean up get ready to process next chain
 					for(int i=1; i<=m; i++) {
 						if(LL[i] > 99) continue;  // skip marked inactive moves
 						board0.board[LL[i]/9][LL[i]%9] = 0;
 					}
-					m0 = 1;
+					//m0 = 1;
+					findpts();                // reset the board
 				}
 			}
 			// find highest score
 			Hp = 0;
 			for(n=0; n < moveslists.size(); n++) {
 				int sc = 0;
-				moveslists.get(n)[0] = 0;
+				moveslists.get(n)[0] = 0;     // [0] reuse to be total points of chain
 				for(int i=1; moveslists.get(n)[i] >= 0 && i < MOVESLISTSIZ; i++) {
 					if(moveslists.get(n)[i] > 99) continue;
 					sc = board0.checkScores(moveslists.get(n)[i]);
@@ -283,7 +293,7 @@ class BestMove0 extends BestMove {
 					else break;
 				}
 				if(Hp < moveslists.get(n)[0]) {
-					Hp = moveslists.get(n)[0];
+					Hp = moveslists.get(n)[0]; 
 				}
 				for(int i=0; i<9; i++) for(int j=0; j<9; j++) {
 					if(board0.board[i][j] == n+1000) board0.board[i][j] = 0;
@@ -291,13 +301,13 @@ class BestMove0 extends BestMove {
 			}
 
 
-			if(this.scoringFlag < 8) {
-			// copy all scoring moves to theMoves[]
-				this.theMove = Lps[1];
-				theMoves = Lps.clone();
-				theMoves[0] = 2;
-			}
-			else {
+//			if(this.scoringFlag < 8) {
+//			// copy all scoring moves to theMoves[]
+//				this.theMove = Lps[1];
+//				theMoves = Lps.clone();
+//				theMoves[0] = 2;
+//			}
+//			else {
 			// find highest scores chain, and copy to theMoves[]
 				for(n=0; n < moveslists.size(); n++) {
 					if(moveslists.get(n)[0] == Hp) {
@@ -314,7 +324,7 @@ class BestMove0 extends BestMove {
 						break;
 					}
 				}
-			}
+//			}
 			// assert valid moves; should not happen
 			if(this.theMove < 0 || this.theMove > 80)    // should not happen
 				this.theMove = -1;
@@ -322,7 +332,7 @@ class BestMove0 extends BestMove {
 				theMoves[0] = 0;
 			else                                         // assert proper moves chain termination
 			for(int i=2; i < MOVESLISTSIZ; i++) {
-				if(theMoves[i] >= 0 || theMoves[i] < 81) continue;
+				if(theMoves[i] >= 0 && theMoves[i] < 81) continue;
 				else if(theMoves[i] < 0) break;
 				else {
 					theMoves[0] = 0;
