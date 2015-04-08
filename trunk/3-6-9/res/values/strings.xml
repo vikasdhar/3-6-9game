@@ -8,7 +8,7 @@
 <string name="about_app">About</string>
 <string name="hello_world">Start a new game from the menu</string>
 <string name="msg_about">About</string>
-<string name="msg_release">1.3.9 GPL</string>
+<string name="msg_release">1.4.0 GPL</string>
 <string name="msg_copyr">© 2014, 2015 Cecil Cheung</string>
 <string name="msg_desc">An old time board game, used to play with a pen and paper, re-emerged as an app.\nGenerally, players take turns (double) tap a square on the board to mark it. Make exactly 3, 6, or 9 squares in a line to score. Highest score wins.\n\nSee http://3–6–9game.googlecode.com/\n© 2014, 2015 Cecil Cheung</string>
 <string name="msg_gameend">Game concluded</string>
