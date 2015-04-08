@@ -38,14 +38,14 @@ public class BestMove0 extends BestMove {
 	public int go() {
 		this.theMove = -1;
 		if(theMoves[0] > 0) {        // previously found move sequence
+			if(myDebugLevel.Mode) 
+				Log.d("moves seq","Move:"+Integer.toString(theMoves[0]));
 			this.theMove = theMoves[theMoves[0]];
 			theMoves[0]++;
 			if(theMoves[theMoves[0]] < 0) theMoves[0] = 0;
 			try {
 				Thread.sleep(1200);  // insert some delay so user can see the moves
 			} catch (InterruptedException e) {}
-			if(myDebugLevel.Mode) 
-				Log.d("moves seq","Move:"+Integer.toString(theMoves[0]));
 		}
 		else if(super.getAIlevel() == 1) {
 			long t0 = System.currentTimeMillis() + 1000;
@@ -219,71 +219,102 @@ public class BestMove0 extends BestMove {
 			return;
 		}
 		else {
-		// resolve conflicting moves
-			moveslists.add(Lps.clone());
-			moveslists.get(0)[0] = 1;    // points to first move to examine
+			moveslists.add(new int[MOVESLISTSIZ]);   // initial null chain
+			moveslists.get(0)[0] = 1;
+			moveslists.get(0)[1] = -1;
+			moveslists.get(0)[2] = -1;
 			if(myDebugLevel.Msg > 1)
 				Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
 			int n, m, p, m0;
-			for(n=0; n < moveslists.size(); n++) {
-				m = 1;
-				while(moveslists.get(n)[m] >= 0 && m < MOVESLISTSIZ) m++;
-				m--;
-				int[] L = moveslists.get(n);
-				m0 = L[0];
-				for(int j=m0; j<m; j++) {
-					if(L[j] > 99) continue;
-					int Lp = L[j];
-					p = board0.board[Lp/9][Lp%9];
-					board0.board[Lp/9][Lp%9] = 200;
-					for(int k=j+1; k<=m; k++) {
-						if(L[k] > 99) continue;
-						int s0=board0.board[L[k]/9][L[k]%9] + 100;
-						int s = board0.checkScores(L[k]);
-						if(s != s0) {
-							this.scoringFlag = 8;  // flag conflicting moves
-							// construct a new moves chain
-							int [] L0 = L.clone();
-							// mark the moves as conflicting
-							L0[k] += 100;
-							L[j] += 100;
-							L0[0] = m0;
-							moveslists.add(L0);
-							Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
-						}
-					}
-					board0.board[Lp/9][Lp%9] = p;
-				}
-			// apply current moves chain, append and re-do
+			for(n=0; n < moveslists.size(); ) {
 				int[] LL = moveslists.get(n);
-				for(int i=1; i<=m; i++) {
-					if(LL[i] > 99) continue;  // skip marked inactive moves
+				m = 1;
+				while(m < MOVESLISTSIZ && LL[m] >= 0) m++;
+				m--;
+				for(int i=1; i<LL[0]; i++) {
+					if(LL[i] > 99) continue;         // skip marked inactive moves
 					board0.board[LL[i]/9][LL[i]%9] = n+1000;
 				}
 				findpts();
-				if(Lps[0] > 0) {              // new scoring moves found
-					Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
-					m0 = m+1;
-					LL[0] = m + 1;
-					for(int i=1; Lps[i] >= 0 && m+i < MOVESLISTSIZ-1; i++) {
-						LL[m+i] = Lps[i];
-						LL[m+i+1] = -1;
+				if(LL[0] == m+1) {                   // if all moves are applied			
+				if(Lps[0] > 0) {                     // new scoring moves found
+					if(myDebugLevel.Msg > 1) 
+						Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
+					//LL[0] = m + 1;                   // points to first move to examine
+					for(int i=1; Lps[i] >= 0 && m < MOVESLISTSIZ-2; i++) {
+						m++;
+						LL[m] = Lps[i];
+						LL[m+1] = -1;
 					}
-					n--;                      // force a re-do of current chain
 				} else {                      
 					// clean up get ready to process next chain
 					for(int i=1; i<=m; i++) {
 						if(LL[i] > 99) continue;  // skip marked inactive moves
 						board0.board[LL[i]/9][LL[i]%9] = 0;
 					}
-					//m0 = 1;
-					findpts();                // reset the board
+					n++;                      // move on to next chain
+					continue;
+					//findpts();                // reset the board
+				}}
+				
+		// resolve conflicting moves
+				m0 = LL[0];
+				for(int j=m0; j<m; j++) {
+					if(LL[j] > 99) continue;
+					int Lp = LL[j];
+					p = board0.board[Lp/9][Lp%9];
+					board0.board[Lp/9][Lp%9] = 200;
+					for(int k=j+1; k<=m; k++) {
+						if(LL[k] > 99) continue;
+						int s0=board0.board[LL[k]/9][LL[k]%9] + 100;
+						int s = board0.checkScores(LL[k]);
+						if(s != s0) {
+							this.scoringFlag = 8;  // flag conflicting moves
+							// construct a new moves chain
+							int [] L0 = LL.clone();
+							// mark the moves as conflicting
+							L0[k] += 100;
+							LL[j] += 100;
+							//L0[0] = m0;
+							moveslists.add(L0);
+							Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
+						}
+					}
+					board0.board[Lp/9][Lp%9] = p;
 				}
+				LL[0] = m + 1; //?
+				
+			// apply current moves chain, append and re-do
+//				int[] LL = moveslists.get(n);
+//				for(int i=1; i<=m; i++) {
+//					if(LL[i] > 99) continue;  // skip marked inactive moves
+//					board0.board[LL[i]/9][LL[i]%9] = n+1000;
+//				}
+//				findpts();
+//				if(Lps[0] > 0) {              // new scoring moves found
+//					Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" appended");
+//					m0 = m+1;                 // points to first move to examine
+//					LL[0] = m + 1;            // points to first move to examine
+//					for(int i=1; Lps[i] >= 0 && m+i < MOVESLISTSIZ-1; i++) {
+//						LL[m+i] = Lps[i];
+//						LL[m+i+1] = -1;
+//					}
+//					n--;                      // force a re-do of current chain
+//				} else {                      
+//					// clean up get ready to process next chain
+//					for(int i=1; i<=m; i++) {
+//						if(LL[i] > 99) continue;  // skip marked inactive moves
+//						board0.board[LL[i]/9][LL[i]%9] = 0;
+//					}
+//					//m0 = 1;
+//					findpts();                // reset the board
+//				}
 			}
 			// find highest score
 			Hp = 0;
 			for(n=0; n < moveslists.size(); n++) {
 				int sc = 0;
+//				int[] LL = moveslists.get(n);
 				moveslists.get(n)[0] = 0;     // [0] reuse to be total points of chain
 				for(int i=1; moveslists.get(n)[i] >= 0 && i < MOVESLISTSIZ; i++) {
 					if(moveslists.get(n)[i] > 99) continue;
@@ -311,8 +342,8 @@ public class BestMove0 extends BestMove {
 			// find highest scores chain, and copy to theMoves[]
 				for(n=0; n < moveslists.size(); n++) {
 					if(moveslists.get(n)[0] == Hp) {
-				Log.d("AI1985b","Moveslist: "+Integer.toString(n)
-						+" high score: "+Integer.toString(Hp));
+						if(myDebugLevel.Mode) 
+							Log.d("AI1985b","Moveslist: "+Integer.toString(n)+" hi score:"+Integer.toString(Hp));
 						for(int i=1, j=1; i < MOVESLISTSIZ; i++) {
 							if(moveslists.get(n)[i] > 99) continue;
 							theMoves[j] = moveslists.get(n)[i];
