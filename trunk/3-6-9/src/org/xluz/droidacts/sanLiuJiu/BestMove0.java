@@ -388,7 +388,7 @@ public class BestMove0 extends BestMove {
 		return i;
 	}
 	
-/* New algorithm
+/* New algorithm: unfinished
  * 	
  */
 	private void AI2015a() {
