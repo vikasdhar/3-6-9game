@@ -1,5 +1,12 @@
 package org.xluz.droidacts.sanLiuJiu.test;
 
+/* Test cases for computer play with the old rules
+ * 
+ * Copyright (c) 2015 Cecil Cheung
+ * This software is released under the GNU General Public License version 3.
+ * See, for example, "http://www.gnu.org/licenses/gpl.html".
+ */
+
 import junit.framework.*;
 
 public class AI1985tests extends TestCase {
