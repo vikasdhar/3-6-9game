@@ -10,5 +10,10 @@
         android:orderInCategory="900"
         android:showAsAction="never"
         android:title="@string/about_app"/>
-
+    <item
+        android:id="@+id/howtoplay"
+        android:orderInCategory="800"
+        android:showAsAction="never"
+        android:title="@string/intro"/>
+    
 </menu>
