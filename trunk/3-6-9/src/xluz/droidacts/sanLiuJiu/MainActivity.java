@@ -252,76 +252,60 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		TextView pn[] = { p1, p2 };
+		
 	// events not dealt with by the views
 		if(event.getAction() == MotionEvent.ACTION_UP && G0!=null) {
 			int s = G0.getStatus();
-			if(s > 81) {
-				saveGameProgress();
-				p1.setBackgroundColor(0x00FFFFFF);
-				p2.setBackgroundColor(0x00FFFFFF);
-				s1.setText(Integer.toString(G0.getScores(1)));
-				s2.setText(Integer.toString(G0.getScores(2)));
-				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(pn[G0.huseturn].getText()+" +"+Integer.toString(G0.getLastscore()));
-				} else {  // original rules
-						tt.setText(pn[(G0.huseturn+1)%2].getText()+this.getScoresSeq());
+			if(bd.getGameState() > 0) {
+				// update scores
+				if(s > 1) {
+					s1.setText(Integer.toString(G0.getScores(1)));
+					s2.setText(Integer.toString(G0.getScores(2)));
+					if((bd.getGameState()/32)%2 == 0) 
+						tt.setText(pn[G0.huseturn].getText()+" +"+Integer.toString(G0.getLastscore()));
+					else {  // original rules
+						if(getScoresSeq().compareTo(" ") != 0 ||
+						   tt.getText().toString().startsWith(pn[(G0.huseturn+1)%2].getText().toString()))
+							tt.setText(pn[(G0.huseturn+1)%2].getText()+getScoresSeq());
+					}
 				}
-				if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2)) {
-					Toast.makeText(this, R.string.msg_winlogic,	Toast.LENGTH_LONG).show();
-					UIoptions += 16;
+				
+				if(s <= 0) {
+					// should not happen
 				}
-				else
-					Toast.makeText(this, R.string.msg_gameend, Toast.LENGTH_LONG).show();
-				bd.setGameState(0);
-			}
-			if(s == 0) {
+				else if(s == 1) {
+					// initial display
+					p1.setBackgroundColor(0xFFFFFF66);
+					p2.setBackgroundColor(Color.WHITE);
+				}
+				else if(s > 81) {
+					// just ended
+					p1.setBackgroundColor(0x00FFFFFF);
+					p2.setBackgroundColor(0x00FFFFFF);
+					saveGameProgress();
+					if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2)) {
+						Toast.makeText(this, R.string.msg_winlogic,	Toast.LENGTH_LONG).show();
+						UIoptions += 16;
+					}
+					else
+						Toast.makeText(this, R.string.msg_gameend, Toast.LENGTH_LONG).show();
+					bd.setGameState(0);
+				}
+				else {
+					pn[(G0.huseturn+1)%2].setBackgroundColor(0xFFFFFF66);
+					pn[G0.huseturn].setBackgroundColor(Color.WHITE);
+
+					// if 1-player game 
+					if(bd.getGameState()<64 && G0.huseturn==0) {  // vs. AI
+						bd.setGameState(bd.getGameState()+1024);
+						dispatchAI(G0.movesSeq);
+					}
+				}
 				
 			}
-			else if(s == 1) {
-				// initial display
-				p1.setBackgroundColor(0xFFFFFF66);
-				p2.setBackgroundColor(Color.WHITE);
-				//tt.setText(" ");
-			}
-			else if(bd.getGameState()>0 && G0.huseturn==0) {
-				// highlight player-2
-				p2.setBackgroundColor(0xFFFFFF66);
-				p1.setBackgroundColor(Color.WHITE);
-				// update scores
-				s1.setText(Integer.toString(G0.getScores(1)));
-				s2.setText(Integer.toString(G0.getScores(2)));
-				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p1.getText()+" +"+Integer.toString(G0.getLastscore()));
-				} else {  // original rules
-					if(G0.getLastscore() > 0) {
-						//tt.setText(p2.getText()+" +"+Integer.toString(G0.getLastscore()));
-						tt.setText(p2.getText()+this.getScoresSeq());
-					} else {
-						tt.setText(" ");
-					}
-				}
-				// if 1-player game 
-				if(bd.getGameState()<64) {  // vs. AI
-					bd.setGameState(bd.getGameState()+1024);
-					dispatchAI(G0.movesSeq);
-				}
-			}
-			else if(bd.getGameState()>0 && G0.huseturn==1) {
-				// highlight player-1
-				p1.setBackgroundColor(0xFFFFFF66);
-				p2.setBackgroundColor(Color.WHITE);
-				// update scores
-				s1.setText(Integer.toString(G0.getScores(1)));
-				s2.setText(Integer.toString(G0.getScores(2)));
-				if((bd.getGameState()/32)%2 == 0) {
-					tt.setText(p2.getText()+" +"+Integer.toString(G0.getLastscore()));
-				} else {  // original rules
-					if(G0.getLastscore() > 0) {
-						//tt.setText(p1.getText()+" +"+Integer.toString(G0.getLastscore()));
-						tt.setText(p1.getText()+this.getScoresSeq());
-					} else {
-						tt.setText(" ");	
-					}
+			else {
+				if(s > 81) {
+					Toast.makeText(this, R.string.hello_world, Toast.LENGTH_LONG).show();
 				}
 			}
 		}
@@ -480,7 +464,7 @@ public class MainActivity extends Activity {
 
 	private void startAGame(int mode) {
 		long Tnow = System.currentTimeMillis()/1000;  // since 1970
-		Tnow -= 978307200L;  // since 2001
+		Tnow -= 978307200L;                           // since 2001
 		
 		// Get game settings from preference
 		if(mode == 1) {  // 1 player

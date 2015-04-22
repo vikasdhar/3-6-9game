@@ -17,6 +17,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+@SuppressWarnings("unused")
+
 public class GameBoard extends TextView {
 	private Paint cursorPaint, markPaint;
 	private Paint linePaint, scorPaint;
