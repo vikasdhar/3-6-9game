@@ -264,9 +264,10 @@ public class MainActivity extends Activity {
 					if((bd.getGameState()/32)%2 == 0) 
 						tt.setText(pn[G0.huseturn].getText()+" +"+Integer.toString(G0.getLastscore()));
 					else {  // original rules
-						if(getScoresSeq().compareTo(" ") != 0 ||
-						   tt.getText().toString().startsWith(pn[(G0.huseturn+1)%2].getText().toString()))
+						if(getScoresSeq().compareTo(" ") != 0)
 							tt.setText(pn[(G0.huseturn+1)%2].getText()+getScoresSeq());
+						else if(tt.getText().toString().startsWith(pn[(G0.huseturn+1)%2].getText().toString()))
+							tt.setText("  ");
 					}
 				}
 				
