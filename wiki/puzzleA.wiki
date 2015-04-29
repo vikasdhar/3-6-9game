@@ -1,0 +1,5 @@
+#labels miscellaneous
+== Puzzle A ==
+
+If you are the "5th grader" in the game, could you finish the board? What would be your final score?
+
