@@ -1,5 +1,6 @@
 #labels miscellaneous
 == Puzzle A ==
 
-If you are the "5th grader" in the game, could you finish the board? What would be your final score?
+If you are the "5th Grader" in the game, could you finish the board? What would be your final score?
 
+http://3-6-9game.googlecode.com/svn/Files/screen_3-6-9_A.png
