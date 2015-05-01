@@ -1,0 +1,6 @@
+#summary What is this project
+
+
+As a game run on a phone, this project was made to teach my kid programming skills. The feel, look, and the game itself are kept quite simplistic. Originally we played this paper+pencil board game in school during recess. Two players take turn putting crosses on a 9-by-9 board. Whoever make connections to three, six, or nine crosses scores those points. Obviously The player with the higher score wins.
+
+In the 80s, we had the first generation micro-computers in school. So I coded this game in BASIC and eventually got it done as a project in my computer science class. The program worked quite well despite being painfully slow. Now we port/remake the codes into an Android app. It amazes me to see how a tiny phone performs thousands of times faster than the machines in the old days.
