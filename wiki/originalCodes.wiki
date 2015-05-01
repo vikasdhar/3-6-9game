@@ -1,0 +1,14 @@
+#summary Original source codes of the game
+
+= Original version  =
+
+Quite amazingly a hard copy of the original source codes survived the years. I scanned the pages and then passed them through OCR software. The codes as shown contains numerous typos since apparently OCR do not work well on dot matrix fonts. 
+
+The original version of the game was programmed in BASIC. With that many goto statements and minimal comments/explanations, the codes are quite difficult to follow. Perhaps some may appreciate how messy it was to write (and debug) computer programs back in those days.
+
+
+== 1985 source codes written in BASIC ==
+
+{{{
+
+}}}
