@@ -1,0 +1,16 @@
+#labels Featured
+
+#summary A summary of the game.
+
+= Introduction =
+
+A simple game to test your wits. 
+
+
+= Instructions =
+
+Get to the menu bar to start a new one-player or two-player game. Players take turns. Double tap a square to mark it and begin playing. Make rows, columns, or diagonals of exactly 3, 6, or 9 to score. Highest score wins.
+
+Copyright 2014, 2015 Cecil Cheung
+
+ 
