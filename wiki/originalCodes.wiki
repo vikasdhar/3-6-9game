@@ -1,6 +1,7 @@
 #summary Original source codes of the game
 
 = Original version  =
+http://3-6-9game.googlecode.com/svn/Files/screenshot-00.png
 
 Quite amazingly a hard copy of the original source codes survived the years. I scanned the pages and then passed them through OCR software. The codes as shown contains numerous typos since apparently OCR do not work well on dot matrix fonts. 
 
