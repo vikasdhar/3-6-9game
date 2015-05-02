@@ -5,3 +5,6 @@ The slow (CPU consuming) part was the computer play routines. The algorithm chec
 
 
 Now we port/remake the codes into an Android app. The app is also a means to teach my kid programming skills. Besides being nostalgic, that is why the feel, look, and the game itself are kept simplistic. I imagine it is fun to show off an app that you make on your own cell phone. Then it amazes me to see how a tiny phone performs thousands of times faster than the bulky calculators in the old days.
+
+
+I would maintain this app as an educational project. Friends and family will find the app in their Google play store. Other beta testers are welcome. 
