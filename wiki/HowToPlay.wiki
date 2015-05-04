@@ -1,14 +1,18 @@
-#summary A summary of the game.
+#summary How to play
 #labels Featured
 
-= Introduction =
+= Quick start =
 
-A simple game to test your wits. Two players take turn putting crosses on a 9-by-9 board. Whoever make connections to three, six, or nine crosses scores those points. Obviously The player with the higher score wins. See project3_6_9 for the history of the project.
+A simple game to test your wits, this app is. Use the menu bar to start a new one-player or two-player game. Then two players take turn marking one open square on a 9-by-9 board. Whoever make joining three, six, or nine squares scores those points. One may think of this game as a generalized tic-tac-toe. Obviously the player with the higher score wins. 
 
-= Instructions =
+
+= Details =
 
 Get to the menu bar to start a new one-player or two-player game. Players take turns. Double tap a square to mark it and begin playing. Make rows, columns, or diagonals of exactly 3, 6, or 9 to score. Highest score wins.
 
+
+
 Copyright 2014, 2015 Cecil Cheung
+See project3_6_9 for the history of the project.
 
  
