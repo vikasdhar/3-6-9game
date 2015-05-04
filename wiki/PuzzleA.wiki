@@ -1,4 +1,6 @@
+#summary A game play puzzle
 #labels miscellaneous
+
 == Puzzle A ==
 This partial game is played with the original rules. 
 If you are the "5th Grader" in the game, could you finish the board? What would be your final score?
