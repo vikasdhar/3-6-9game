@@ -7,6 +7,8 @@ Quite amazingly a hard copy of the original source codes survived the years. I s
 
 The original version of the game was programmed in BASIC. With that many goto statements and minimal comments/explanations, the codes are quite difficult to follow. Perhaps some may appreciate how messy it was to write (and debug) computer programs back in those days.
 
+The computer play algorithm is ported into level 3 under the "original games rules".
+
 
 == 1985 source codes written in BASIC ==
 Seriously, there are a lot of typos so the codes will not work even if you find a BASIC interpreter or compiler.
