@@ -22,7 +22,8 @@ To start a new game, click the corresponding buttons on the menu bar.
 There is also a resume game button in case the last game was interrupted and the app has to be restarted. Starting a new game also abort the on-going game. Changes in the options do not take effect until the next new game.
 
 As mentioned, this app is a remake of some really old codes. It is also a way to teach my kid programming skills. 
-See Project3_6_9 for the history of the project.
+See the [Project369 project wiki] for the history of the project.
+A half finished game is posted in the wiki as a [PuzzleA puzzle].
 
 Enjoy!
 
