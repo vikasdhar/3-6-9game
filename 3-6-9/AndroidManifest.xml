@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="xluz.droidacts.sanLiuJiu"
-    android:versionCode="56"
+    android:versionCode="63"
     android:versionName="@string/msg_release" android:installLocation="auto">
 
     <uses-sdk
