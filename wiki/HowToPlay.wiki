@@ -21,9 +21,11 @@ There are actually two sets of scoring rules, therefore two different games:
 To start a new game, click the corresponding buttons on the menu bar.
 There is also a resume game button in case the last game was interrupted and the app has to be restarted. Starting a new game also abort the on-going game. Changes in the options do not take effect until the next new game.
 
+
+= More info =
 As mentioned, this app is a remake of some really old codes. It is also a way to teach my kid programming skills. 
-See the [Project369 project wiki] for the history of the project.
-A half finished game is posted in the wiki as a [PuzzleA puzzle].
+The [Project369 project wiki] includes the origin and history of the project.
+For fun, a half finished game is posted in the wiki as a [PuzzleA puzzle].
 
 Enjoy!
 
