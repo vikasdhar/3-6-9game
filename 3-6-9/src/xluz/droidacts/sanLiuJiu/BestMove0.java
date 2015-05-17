@@ -97,7 +97,8 @@ class BestMove0 extends BestMove {
 	}
 
 /* Find all the scoring moves
- * 
+ * returns total points and scoring moves in Lps,
+ * also mark the scoring moves on the board
  */
 	private void findpts() {
 		Lps[1] = -1;
@@ -294,7 +295,7 @@ class BestMove0 extends BestMove {
 			this.theMove = -1;
 		else if(theMoves[2] < 0)                     // should not happen
 			theMoves[0] = 0;
-		else  {                                       // assert proper moves chain termination
+		else  {                                      // assert proper moves chain termination
 			for(int i=2; i < MOVESLISTSIZ; i++) {
 				if(theMoves[i] >= 0 && theMoves[i] < 81) continue;
 				else if(theMoves[i] < 0) break;
@@ -323,12 +324,123 @@ class BestMove0 extends BestMove {
 	}
 	
 /* New algorithm: unfinished
- * 	
+ * "just be thorough"
  */
 	private void AI2015a() {
+		BestMove0twin opp0, opp1;
 		findpts();
+		if(Lps[0] == 0) {                          // find opponent lowest scores
+			this.theMove = Lps[1];  // fail-safe
+			int oppscore[] = new int[81];
+			int k0 = (int) System.currentTimeMillis()%64;
+			int Hp = 999;
+			for(int j, i=0; i<81; i++) {
+				j = (i + k0) % 81;
+				if(board0.board[j/9][j%9] > 0) continue;
+				board0.board[j/9][j%9] = 300;      // mark a trial move
+				opp0 = new BestMove0twin(board0.board.clone());
+				opp0.go();
+				if(myDebugLevel.Msg > 0) 
+					Log.d("AI2015-1","Counterparty launched:"+Integer.toString(j));
+				oppscore[j] = opp0.Lps[0];
+				board0.board[j/9][j%9] = 0;        // reset the board
+				if(Hp > oppscore[j]) {             // find lowest lost
+					Hp = oppscore[j];
+					this.theMove = j;
+				}
+//				if(oppscore[j] == 0) {             // 1st found zero lost
+//					this.theMove = j;
+//					break;
+//				}
+			}
+			if(myDebugLevel.Mode) 
+				Log.d("AI2015-1","Move: "+Integer.toString(theMove)+" lowest lost:"+Integer.toString(Hp));
+		}
+		else if(Lps[0] > 0 ) {                     // at least 1 scoring move
+			// find all move chains
+			opp0 = new BestMove0twin(board0.board.clone());
+			opp0.go();
+			int n = opp0.moveslists.size();
+			if(myDebugLevel.Mode) 
+				Log.d("AI2015-2","Moveslist="+Integer.toString(n));
+			if(n < 1) {                            // something is wrong, abort
+//				Log.d("AI2015-2","exception in opp0: moveslist="+Integer.toString(n));
+				return;
+			}
+			for(int k=0; k<n; k++) {               // examine every chain & safe exit
+				int oppscore[] = new int[81];
+				int[] LL = opp0.moveslists.get(k);
+				if(myDebugLevel.Msg > 1) 
+					Log.d("AI2015-2"," Examine moveslist:"+Integer.toString(k));
+				// apply move chain
+				for(int i=1; LL[i]>=0 && i<MOVESLISTSIZ; i++) {
+					if(LL[i] > 99) continue;       // skip marked inactive moves
+					board0.board[LL[i]/9][LL[i]%9] = k+301;
+				}
+				int Hp = 999, xm = -1;
+				for(int i=0; i<81; i++) {          // find min cost as exit move
+					if(board0.board[i/9][i%9] > 0) continue;
+					board0.board[i/9][i%9] = 300;
+					opp1 = new BestMove0twin(board0.board.clone());
+					opp1.go();
+					oppscore[i] = opp1.Lps[0];
+					board0.board[i/9][i%9] = 0;
+					if(Hp > oppscore[i]) {
+						Hp = oppscore[i];
+						xm = i;
+					}
+				}
+				if(Hp < 999) LL[0] -= Hp;          // net score after opponent next moves
+				
+				for(int i=1; ; i++) {              // append to move chain and reset board
+					if(i > MOVESLISTSIZ-2)  break;
+					else if(LL[i] < 0) {
+						LL[i] = xm;
+						LL[i+1] = -1;
+						break;
+					}
+					if(LL[i] > 99) continue;       // skip marked inactive moves
+					board0.board[LL[i]/9][LL[i]%9] = 0;
+				}
+				if(myDebugLevel.Mode) 
+					Log.d("AI2015-2","Moveslist:"+Integer.toString(k)+" score:"+Integer.toString(LL[0]));
+			}
+			
+			// find highest net scores from all chains
+			int tmpHp = -999;
+			int mx = -1;
+			for(int k=0; k<n; k++) {
+				int[] LL = opp0.moveslists.get(k);
+				if(tmpHp < LL[0]) {
+					tmpHp = LL[0];
+					mx = k;
+				}
+			}
+			if(myDebugLevel.Mode) 
+				Log.d("AI2015-2","Moveslist: "+Integer.toString(mx)+" hi score:"+Integer.toString(tmpHp));
+			if(mx < 0) mx = 0;                     // assertion against serious problems
+			
+			// copy move chain to theMoves
+			for(int i=1, j=1; i < MOVESLISTSIZ; i++) {
+				if(opp0.moveslists.get(mx)[i] > 99) continue;
+				if(myDebugLevel.Msg > 1) 
+					Log.d("AI2015-2"," Copy moveslist: "+Integer.toString(i)+"->"+Integer.toString(opp0.moveslists.get(mx)[i]));
+				theMoves[j] = opp0.moveslists.get(mx)[i];
+				j++;
+				if(opp0.moveslists.get(mx)[i] < 0) break;
+			}
+			this.theMove = theMoves[1];
+			if(theMoves[2] >= 0) theMoves[0] = 2;
+			else theMoves[0] = 0;
+			
+		}
+		else {                                     // something is really wrong
+			this.theMove = AI0randomPlay();        // fail-safe
+			theMoves[0] = 0;
+			if(myDebugLevel.Mode) 
+				Log.d("AI2015","exception in Lps: "+Integer.toString(Lps[0]));
+		}
 		
-		this.theMove = AI0randomPlay(); //temporary
 	}
 	
 }
