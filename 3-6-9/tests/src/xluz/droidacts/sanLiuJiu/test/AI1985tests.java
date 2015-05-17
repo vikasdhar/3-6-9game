@@ -11,7 +11,7 @@ import junit.framework.*;
 
 public class AI1985tests extends TestCase {
 
-	static final int AILEVELTOTEST = 3;
+	static final int AILEVELTOTEST = 4;
 
 	public void testBoard1() {
 		int[] moves = { 0, 55, 64, -1};
@@ -19,7 +19,7 @@ public class AI1985tests extends TestCase {
 		AImov = new xluz.droidacts.sanLiuJiu.BestMove0(moves);
 		Assert.assertEquals("Initial move "+Integer.toString(AImov.getTheMove()), -1, AImov.getTheMove());
 		AImov.setAIlevel(AILEVELTOTEST);
-		Assert.assertEquals("AI level not set", 3, AImov.getAIlevel());
+		Assert.assertEquals("AI level not set", AILEVELTOTEST, AImov.getAIlevel());
 		AImov.go();
 		Assert.assertTrue("1st move:"+Integer.toString(AImov.getTheMove()), 
 				AImov.getTheMove()==46 || AImov.getTheMove()==73);
@@ -85,6 +85,18 @@ public class AI1985tests extends TestCase {
 		AImov.go();
 		System.out.println("Move h:"+Integer.toString(AImov.getTheMove()));
 	}
+	
+	public void testBoard5() {
+		int[] moves = { 0, 30, 38, 23, 44, 74, 33, 59, 52, 0, 10, 3, 54, 78, 27, 7, 13, 71, 64, 67, -1 };
+		xluz.droidacts.sanLiuJiu.BestMove0 AImov;
+		AImov = new xluz.droidacts.sanLiuJiu.BestMove0(moves);
+		Assert.assertEquals("Initial move"+Integer.toString(AImov.getTheMove()), -1, AImov.getTheMove());
+		AImov.setAIlevel(AILEVELTOTEST);
+		AImov.go();
+		Assert.assertTrue("Incorrect move:"+Integer.toString(AImov.getTheMove()), 
+				AImov.getTheMove() == 17 );
+		System.out.println("Move a:"+Integer.toString(AImov.getTheMove()));
+	}
 
 	public void testBoard9() {
 		int[] moves = { 449389106, 1, 2, 3, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 
@@ -95,7 +107,6 @@ public class AI1985tests extends TestCase {
 		AImov = new xluz.droidacts.sanLiuJiu.BestMove0(moves);
 		Assert.assertEquals("Initial move "+Integer.toString(AImov.getTheMove()), -1, AImov.getTheMove());
 		AImov.setAIlevel(AILEVELTOTEST);
-		Assert.assertEquals("AI level not set", 3, AImov.getAIlevel());
 		AImov.go();
 		Assert.assertTrue("Invalid move:"+Integer.toString(AImov.getTheMove()), 
 				AImov.getTheMove() >= 0);
