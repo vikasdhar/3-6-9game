@@ -149,15 +149,15 @@ public class MainActivity extends Activity {
 			@Override
 			public void onGlobalLayout() {
 		        wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-				float sc = 1.0f;
+				float sc = 1.0f;                   // based on 320px width
 				if(wDisp.getMeasuredWidth() > 1000) {
 					sc = 3;
 				}
 				else if(wDisp.getMeasuredWidth() > 700) {
 					sc = 2;
 				}
-				else if(wDisp.getMeasuredWidth() > 450) {
-					sc = 1.5f;
+				else if(wDisp.getMeasuredWidth() > 480) {
+					sc = 1.25f;
 				}
 				if(sc > 1.0) {
 					tt.setTextSize(tt.getTextSize()*sc);
@@ -166,6 +166,7 @@ public class MainActivity extends Activity {
 					s1.setTextSize(s1.getTextSize()*sc);
 					s2.setTextSize(s2.getTextSize()*sc);
 				}
+				// OS 4.4 may not need this extra scaling
 		        if(myDebugLevel.Msg > 0) 
 		        	Log.d("UI_info1", "Screen width:"+
 		        			Integer.toString(wDisp.getMeasuredWidth())+"  "+
