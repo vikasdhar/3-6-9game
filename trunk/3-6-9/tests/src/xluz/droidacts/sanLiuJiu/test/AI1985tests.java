@@ -10,7 +10,9 @@ package xluz.droidacts.sanLiuJiu.test;
 import junit.framework.*;
 
 public class AI1985tests extends TestCase {
-
+/* Note that java System.out route to Log.i with tag:System.out
+ * 
+ */
 	static final int AILEVELTOTEST = 4;
 
 	public void testBoard1() {
@@ -84,6 +86,8 @@ public class AI1985tests extends TestCase {
 		System.out.println("Move g:"+Integer.toString(AImov.getTheMove()));
 		AImov.go();
 		System.out.println("Move h:"+Integer.toString(AImov.getTheMove()));
+		AImov.go();
+		System.out.println("Move i:"+Integer.toString(AImov.getTheMove()));
 	}
 	
 	public void testBoard5() {

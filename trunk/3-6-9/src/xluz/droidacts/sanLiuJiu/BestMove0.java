@@ -323,16 +323,16 @@ class BestMove0 extends BestMove {
 		return i;
 	}
 	
-/* New algorithm: unfinished
+/* New algorithm: still needs tests
  * "just be thorough"
  */
 	private void AI2015a() {
 		BestMove0twin opp0, opp1;
 		findpts();
 		if(Lps[0] == 0) {                          // find opponent lowest scores
-			this.theMove = Lps[1];  // fail-safe
+			this.theMove = Lps[1];                 // fail-safe
 			int oppscore[] = new int[81];
-			int k0 = (int) System.currentTimeMillis()%64;
+			int k0 = (int) (System.currentTimeMillis() % 64);
 			int Hp = 999;
 			for(int j, i=0; i<81; i++) {
 				j = (i + k0) % 81;
@@ -364,7 +364,6 @@ class BestMove0 extends BestMove {
 			if(myDebugLevel.Mode) 
 				Log.d("AI2015-2","Moveslist="+Integer.toString(n));
 			if(n < 1) {                            // something is wrong, abort
-//				Log.d("AI2015-2","exception in opp0: moveslist="+Integer.toString(n));
 				return;
 			}
 			for(int k=0; k<n; k++) {               // examine every chain & safe exit
