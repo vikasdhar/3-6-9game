@@ -180,12 +180,11 @@ class BestMove0twin extends BestMove {
 						L0[k] += 100;
 						LL[j] += 100;
 						moveslists.add(L0);
-						//Log.d("AI1985b","Moveslists: "+Integer.toString(moveslists.size()));
 					}
 				}
 				board00.board[Lp/9][Lp%9] = p;
 			}
-			LL[0] = m + 1;                       // points to first move to examine
+			LL[0] = m + 1;                           // points to first move to examine
 		}
 
 		// find highest scores
@@ -229,7 +228,7 @@ class BestMove0twin extends BestMove {
 			this.theMove = -1;
 		else if(theMoves[2] < 0)                     // should not happen
 			theMoves[0] = 0;
-		else  {                                       // assert proper moves chain termination
+		else  {                                      // assert proper moves chain termination
 			for(int i=2; i < MOVESLISTSIZ; i++) {
 				if(theMoves[i] >= 0 && theMoves[i] < 81) continue;
 				else if(theMoves[i] < 0) break;

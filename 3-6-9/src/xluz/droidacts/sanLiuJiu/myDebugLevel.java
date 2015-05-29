@@ -8,7 +8,7 @@ package xluz.droidacts.sanLiuJiu;
  */
 
 public class myDebugLevel {
-	static final boolean Mode = true;
+	static final boolean Mode = false;
 	static final int Msg = 0;
 	static final byte Mask = 0x0F;
 }
