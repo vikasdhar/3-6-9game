@@ -11,9 +11,9 @@ import junit.framework.*;
 
 public class AI1985tests extends TestCase {
 /* Note that java System.out route to Log.i with tag:System.out
- * 
+ * run as android JUnit test
  */
-	static final int AILEVELTOTEST = 4;
+	static final int AILEVELTOTEST = 3;
 
 	public void testBoard1() {
 		int[] moves = { 0, 55, 64, -1};
@@ -119,4 +119,21 @@ public class AI1985tests extends TestCase {
 		}
 	}
 
+	public void testBoard91() {
+		int[] moves = { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+				20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 
+				40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 
+				60, 63, 64, 65, 67, 70, 72, 73, 74, 77, 80, 71, -1, -1 };
+		xluz.droidacts.sanLiuJiu.BestMove0 AImov;
+		AImov = new xluz.droidacts.sanLiuJiu.BestMove0(moves);
+		Assert.assertEquals("Initial move "+Integer.toString(AImov.getTheMove()), -1, AImov.getTheMove());
+		AImov.setAIlevel(AILEVELTOTEST);
+		AImov.go();
+		Assert.assertTrue("Invalid move:"+Integer.toString(AImov.getTheMove()), 
+				AImov.getTheMove() >= 0);
+		for(int k=0; k<11 && AImov.getTheMove() >=0; ++k, AImov.go()) {
+			System.out.println("Move found:"+Integer.toString(AImov.getTheMove()));
+		}
+	}
+	
 }
