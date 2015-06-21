@@ -78,10 +78,14 @@ class BestMove {
 			} catch (InterruptedException e) {}
 		}
 		else if(AIlevel>=4) {
+			long t0 = System.currentTimeMillis() + 1100;
 		// find potential scores
 			AIlevel1();
 		// minimize score-giveaway
 			AIlevel3();
+			try {                   // extra slow down
+				while(System.currentTimeMillis() < t0) Thread.sleep(150);
+			} catch (InterruptedException e) {}
 		}
 		return theMove;
 	}
@@ -106,15 +110,16 @@ class BestMove {
 			if(mngiveaway > mnsc) {
 				mngiveaway = mnsc;
 			}
-			board0.board[i/9][i%9] = sc - mngiveaway;
+			board0.board[i/9][i%9] = sc - mnsc;
 		}
+		int k = this.theMove;
 		mnsc = -200;
-		for(int i=0; i<81; i++) {
-			sc = board0.board[i/9][i%9];
+		for(int i=0; i<81; i++, k = (k+1) % 81) {
+			sc = board0.board[k/9][k%9];
 			if(sc >= 0) continue;
 			if(mnsc < sc) {
 				mnsc = sc;
-				this.theMove = i;
+				this.theMove = k;
 			}
 		}
 		
