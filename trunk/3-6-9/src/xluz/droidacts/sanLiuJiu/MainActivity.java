@@ -141,38 +141,41 @@ public class MainActivity extends Activity {
 		if(myDebugLevel.Msg > 0) bd.setText(R.string.msg_release);
 		if(myDebugLevel.Msg > 1) UIoptions += 16;
 
-		// Find out when the screen is finished drawing
-		final LinearLayout wDisp = (LinearLayout)findViewById(R.id.blankDisplay);
-		ViewTreeObserver obs = wDisp.getViewTreeObserver();
-		obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {	
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onGlobalLayout() {
-		        wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-				float sc = 1.0f;                   // based on 320px width
-				if(wDisp.getMeasuredWidth() > 1000) {
-					sc = 3;
-				}
-				else if(wDisp.getMeasuredWidth() > 700) {
-					sc = 2;
-				}
-				else if(wDisp.getMeasuredWidth() > 480) {
-					sc = 1.25f;
-				}
-				if(sc > 1.0) {
-					tt.setTextSize(tt.getTextSize()*sc);
-					p1.setTextSize(p1.getTextSize()*sc);
-					p2.setTextSize(p2.getTextSize()*sc);
-					s1.setTextSize(s1.getTextSize()*sc);
-					s2.setTextSize(s2.getTextSize()*sc);
-				}
-				// OS 4.4 may not need this extra scaling
-		        if(myDebugLevel.Msg > 0) 
-		        	Log.d("UI_info1", "Screen width:"+
-		        			Integer.toString(wDisp.getMeasuredWidth())+"  "+
-		        			Integer.toString(wDisp.getWidth())+" ->"+Float.toString(sc));
-		    } 
-		});		
+		// OS 4.2+ may not need this extra text scaling
+		if(android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+			// Find out when the screen is finished drawing
+			final LinearLayout wDisp = (LinearLayout)findViewById(R.id.blankDisplay);
+			ViewTreeObserver obs = wDisp.getViewTreeObserver();
+			obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {	
+				@SuppressWarnings("deprecation")
+				@Override
+				public void onGlobalLayout() {
+					wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+					float sc = 1.0f;                   
+					if(wDisp.getMeasuredWidth() > 1000) {
+						sc = 3;
+					}
+					else if(wDisp.getMeasuredWidth() > 700) {
+						sc = 2;
+					}
+					else if(wDisp.getMeasuredWidth() > 450) {
+						sc = 1.4f;
+					}
+					if(sc > 1.0) {                 // based on 320px width
+						tt.setTextSize(tt.getTextSize()*sc);
+						p1.setTextSize(p1.getTextSize()*sc);
+						p2.setTextSize(p2.getTextSize()*sc);
+						s1.setTextSize(s1.getTextSize()*sc);
+						s2.setTextSize(s2.getTextSize()*sc);
+					}
+					
+					if(myDebugLevel.Msg > 0) 
+						Log.d("UI_info1", "Screen width:"+
+								Integer.toString(wDisp.getMeasuredWidth())+"  "+
+								Integer.toString(wDisp.getWidth())+" ->"+Float.toString(sc));
+				} 
+			});
+		}
 	}	
 
 	@Override
@@ -476,8 +479,10 @@ public class MainActivity extends Activity {
 		}
 		if(settingsPrefs.getBoolean("oldRules", false)) {
 			gameSettings += 32;
+			bd.setText("Classic game");
 			G0 = new GamePlay0();
 		} else {
+			bd.setText("Modern game");
 			G0 = new GamePlay();
 		}
 		G0.recordMove((int)(101+Tnow));
@@ -491,12 +496,12 @@ public class MainActivity extends Activity {
 		p1.setText(sTrimTo9(settingsPrefs.getString("P1name", "P1")));
 		String[] AInames = getResources().getStringArray(R.array.LevelsDifficulty);
 		if(mode == 1)
-			p2.setText(AInames[gameSettings%16-1]);  //careful when modifying the strings
+			p2.setText(AInames[gameSettings%16-1]);   //careful when modifying the strings
 		else
 			p2.setText(sTrimTo9(settingsPrefs.getString("P2name", "P2")));
 
 		if(myDebugLevel.Msg > 0)
-			bd.setText("Game starts: " + Integer.toString(G0.movesSeq[0]));
+			bd.setText(bd.getText()+" : " + Integer.toString(G0.movesSeq[0]));
 		// trigger the event handler
 		dispatchTouchEvent(MotionEvent.obtain(
 				  SystemClock.uptimeMillis(), SystemClock.uptimeMillis()+100, 
