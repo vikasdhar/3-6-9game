@@ -18,7 +18,7 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         android:text="@string/hello_world"
-        android:textSize="19sp" />
+        android:textSize="19dp" />
 
     <xluz.droidacts.sanLiuJiu.GameBoard
         android:id="@+id/editText3"
@@ -28,7 +28,7 @@
         android:inputType="none"
         android:minHeight="280dp"
         android:text="Game board"
-        android:textSize="12sp" />
+        android:textSize="13dp" />
 
     <TableLayout
         android:id="@+id/tableLayout1"
@@ -46,7 +46,7 @@
                 android:gravity="center"
                 android:inputType="none"
                 android:text="Player 1 "
-                android:textSize="24sp" />
+                android:textSize="24dp" />
 
             <TextView
                 android:layout_weight="1" />
@@ -57,7 +57,7 @@
                 android:gravity="center"
                 android:inputType="none"
                 android:text="Player 2 "
-                android:textSize="24sp" />
+                android:textSize="24dp" />
 
         </TableRow>
         
@@ -70,8 +70,8 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:inputType="none"
-                android:text="000"
-                android:textSize="24sp" />
+                android:text="@string/spc_holder0"
+                android:textSize="24dp" />
 
             <TextView
                 android:layout_weight="1"
@@ -82,8 +82,8 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:inputType="none"
-                android:text="000"
-                android:textSize="24sp" />
+                android:text="@string/spc_holder0"
+                android:textSize="24dp" />
 
         </TableRow>
 

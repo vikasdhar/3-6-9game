@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+<string name="spc_holder0">000</string>     
 <string name="intro">Rules</string>    
 <string name="instruction">Players take turns (double) tap a square on the board to mark it. Line up exactly 3, 6, or 9 squares to score.\nWith default rules, scores can be made vertically, horizontally, and diagonally.\nUnder classic rules, there is no diagonal scoring but the player who scores continue until the move does not make a score.</string>    
 <string name="app_name">3&#8211;6&#8211;9</string>
@@ -8,12 +9,13 @@
 <string name="about_app">About</string>
 <string name="hello_world">Start a new game from the menu</string>
 <string name="msg_about">About</string>
-<string name="msg_release">1.6.0 GPL</string>
+<string name="msg_release">1.6.1 GPL</string>
 <string name="msg_copyr">© 2014, 2015 Cecil Cheung</string>
 <string name="msg_desc">An old time board game, played using a pen and paper, re-emerged as an app.\n\nSee http://3–6–9game.googlecode.com/\n© 2014, 2015 Cecil Cheung</string>
 <string name="msg_gameend">Game concluded</string>
 <string name="msg_winlogic">Excellent! You beat the Logic at the highest level. Please share with us (by email) the game moves. You can do that from the menu.</string>
 <string name="msg_emailgame">We love to examine your last game. Could you email us the games moves?</string>
+<string name="msg_start2nd">Would you like to open first, or play second?</string>
 <string name="send_game">Send game moves</string>
 
 <string-array name="nlevel">

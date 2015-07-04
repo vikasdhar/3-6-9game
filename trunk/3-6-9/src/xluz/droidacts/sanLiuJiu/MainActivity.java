@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
             tt.setText("Against your phone");
         	AlertDialog.Builder gameDialog = new AlertDialog.Builder(this);
         	gameDialog.setTitle("U vs Logic");
-        	gameDialog.setMessage("Would you like to open first, or play second?");
+        	gameDialog.setMessage(R.string.msg_start2nd);
         	gameDialog.setNegativeButton("Go first", null);
         	gameDialog.setPositiveButton("Second", new OnClickListener() {
         		public void onClick(DialogInterface dialog, int arg1) {
@@ -157,44 +157,44 @@ public class MainActivity extends Activity {
 		if(myDebugLevel.Msg > 0) bd.setText(R.string.msg_release);
 		if(myDebugLevel.Msg > 1) UIoptions += 16;
 
-		// OS 4.2+ may not need this extra text scaling
-//		if(android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-			// Find out when the screen is finished drawing
-			final LinearLayout wDisp = (LinearLayout)findViewById(R.id.blankDisplay);
-			ViewTreeObserver obs = wDisp.getViewTreeObserver();
-			obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {	
-				@SuppressWarnings("deprecation")
-				@Override
-				public void onGlobalLayout() {
-					wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-					float sc = 1.0f;
-					float scr = getResources().getDisplayMetrics().density;
-					if(wDisp.getMeasuredWidth() > 1000) {
-						sc = 3;
-					}
-					else if(wDisp.getMeasuredWidth() > 700) {
-						sc = 2;
-					}
-					else if(wDisp.getMeasuredWidth() > 450) {
-						sc = 1.4f;
-					}
-					if(sc > 1.0) {                 // based on 320px width
-//						tt.setTextSize(tt.getTextSize()*sc);
-//						p1.setTextSize(p1.getTextSize()*sc);
-//						p2.setTextSize(p2.getTextSize()*sc);
-//						s1.setTextSize(s1.getTextSize()*sc);
-//						s2.setTextSize(s2.getTextSize()*sc);
-					}
-					
-					if(myDebugLevel.Msg > 0) {
-						Log.d("UI_info1", "Screen width:"+
-								Integer.toString(wDisp.getMeasuredWidth())+"  "+
-								Integer.toString(wDisp.getWidth())+" ->"+Float.toString(sc));
-						Log.d("UI_info1", "Screen density: "+Float.toString(scr));
-					}
-				} 
-			});
-//		}
+		// Find out when the screen is finished drawing
+		final LinearLayout wDisp = (LinearLayout)findViewById(R.id.blankDisplay);
+		ViewTreeObserver obs = wDisp.getViewTreeObserver();
+		obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {	
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onGlobalLayout() {
+				wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+				float sc = 1.0f;
+				float scr = getResources().getDisplayMetrics().density;
+		//					if(wDisp.getMeasuredWidth() > 1000) {
+		//						sc = 3;
+		//					}
+		//					else if(wDisp.getMeasuredWidth() > 700) {
+		//						sc = 2.2f;
+		//					}
+		//					else if(wDisp.getMeasuredWidth() > 460) {
+		//						sc = 1.5f;
+		//					}
+				// size based on 320px width
+				if(scr > 0.0) sc = wDisp.getMeasuredWidth() / (320.0f * scr);
+				if(sc > 1.0) {
+					tt.setTextSize(0, tt.getTextSize()*sc);    // in px units
+					p1.setTextSize(0, p1.getTextSize()*sc);
+					p2.setTextSize(0, p2.getTextSize()*sc);
+					s1.setTextSize(0, s1.getTextSize()*sc);
+					s2.setTextSize(0, s2.getTextSize()*sc);
+					//bd.setTextSize(0, bd.getTextSize()*sc);    // in px units
+				}
+
+				if(myDebugLevel.Msg > 0) {
+					Log.d("UI_info1", "Screen width:"+
+							Integer.toString(wDisp.getMeasuredWidth())+"  "+
+							Integer.toString(wDisp.getWidth())+" ->"+Float.toString(sc));
+					Log.d("UI_info1", "Screen density: "+Float.toString(scr));
+				}
+			} 
+		});
 	}	
 
 	@Override
