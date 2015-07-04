@@ -336,12 +336,14 @@ class BestMove0 extends BestMove {
 			int Hp = 999;
 			for(int j, i=0; i<81; i++) {
 				j = (i + k0) % 81;
+				//oppscore[j] = 999;
 				if(board0.board[j/9][j%9] > 0) continue;
 				board0.board[j/9][j%9] = 300;      // mark a trial move
 				opp0 = new BestMove0twin(board0.board.clone());
 				opp0.go();
-				if(myDebugLevel.Msg > 0) 
-					Log.d("AI2015-1","Counterparty launched:"+Integer.toString(j));
+				if(myDebugLevel.Msg > 1) 
+					Log.d("AI2015-1","Counterparty launched: L"+Integer.toString(j)
+							+" S"+Integer.toString(opp0.Lps[0]));
 				oppscore[j] = opp0.Lps[0];
 				board0.board[j/9][j%9] = 0;        // reset the board
 				if(Hp > oppscore[j]) {             // find lowest lost

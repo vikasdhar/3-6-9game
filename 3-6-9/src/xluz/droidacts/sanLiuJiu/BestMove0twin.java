@@ -77,7 +77,7 @@ class BestMove0twin extends BestMove {
 					int s, i, j;
 					ptsGive[n] = 0;
 					for(i=0; i<9; i++) for(j=0; j<9; j++) {
-						if(board00.board[i][j] < -90) {
+						if(board00.board[i][j] < -80) {
 							s = board00.board[i][j] + 100;
 							if(s == 0) continue;
 							ptsGive[n] += s;
@@ -100,6 +100,7 @@ class BestMove0twin extends BestMove {
 			int k = RANG.nextInt(80);
 			int m = ptsGive[k];
 			this.theMove = k;
+			Lps[0] = -1*m;
 			for(int n=1; n<81; n++) {
 				if(ptsGive[(n+k)%81] < m) {
 					m = ptsGive[(n+k)%81];

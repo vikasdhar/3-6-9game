@@ -5,7 +5,7 @@ import android.util.Log;
 /* 
   Find the best move available
  
-Copyright (c) 2014 Cecil Cheung
+Copyright (c) 2014, 2015 Cecil Cheung
 This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
  */
@@ -98,7 +98,7 @@ class BestMove {
 		for(int i=0; i<81; i++) {
 			if(board0.board[i/9][i%9] > 0) continue;
 			sc = board0.board[i/9][i%9];
-			board0.board[i/9][i%9] = 1;
+			board0.board[i/9][i%9] = 31;
 			mnsc = 0;
 		// find the lowest counter-scores
 			for(int j=0; j<81; j++) {
@@ -135,7 +135,7 @@ class BestMove {
 		for(int i=0; i<81; i++) {
 		// only examine highest score moves
 			if(board0.board[n/9][n%9] == mxsc) {
-				board0.board[n/9][n%9] = 1;
+				board0.board[n/9][n%9] = 21;
 				mnsc = 0;
 				// find the lowest counter-scores
 				for(int j=0; j<81; j++) {

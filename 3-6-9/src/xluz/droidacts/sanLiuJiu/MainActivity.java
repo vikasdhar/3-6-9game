@@ -2,7 +2,7 @@ package xluz.droidacts.sanLiuJiu;
 /*
   A rendition of a childhood board game 3-6-9 
 
-Copyright (c) 2014 Cecil Cheung
+Copyright (c) 2014, 2015 Cecil Cheung
 This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
 	 * bit 4: 
 	 * bit 5: original rules
 	 * bit 6: 2-player
+	 * bit 8: player2 starts
 	 * bit 9:
 	 * bit 10: AI routines in progress
 	 * < 0 : error condition
@@ -83,9 +84,24 @@ public class MainActivity extends Activity {
 			introDialog.show();
             return true;
         case 1:
-            Toast.makeText(this, "U vs Logic", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "U vs Logic", Toast.LENGTH_LONG).show();
             tt.setText("Against your phone");
-            startAGame(1);
+        	AlertDialog.Builder gameDialog = new AlertDialog.Builder(this);
+        	gameDialog.setTitle("U vs Logic");
+        	gameDialog.setMessage("Would you like to open first, or play second?");
+        	gameDialog.setNegativeButton("Go first", null);
+        	gameDialog.setPositiveButton("Second", new OnClickListener() {
+        		public void onClick(DialogInterface dialog, int arg1) {
+        			startAGame(11);
+        		}
+        	});
+        	gameDialog.setNegativeButton("Go first", new OnClickListener() {
+        		public void onClick(DialogInterface dialog, int arg1) {
+        			startAGame(1);
+        		}
+        	});
+			gameDialog.show();
+            //startAGame(1);
             return true;
         case 2:
             Toast.makeText(this, "2-players", Toast.LENGTH_LONG).show();
@@ -142,7 +158,7 @@ public class MainActivity extends Activity {
 		if(myDebugLevel.Msg > 1) UIoptions += 16;
 
 		// OS 4.2+ may not need this extra text scaling
-		if(android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//		if(android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.JELLY_BEAN) {
 			// Find out when the screen is finished drawing
 			final LinearLayout wDisp = (LinearLayout)findViewById(R.id.blankDisplay);
 			ViewTreeObserver obs = wDisp.getViewTreeObserver();
@@ -151,7 +167,8 @@ public class MainActivity extends Activity {
 				@Override
 				public void onGlobalLayout() {
 					wDisp.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-					float sc = 1.0f;                   
+					float sc = 1.0f;
+					float scr = getResources().getDisplayMetrics().density;
 					if(wDisp.getMeasuredWidth() > 1000) {
 						sc = 3;
 					}
@@ -162,20 +179,22 @@ public class MainActivity extends Activity {
 						sc = 1.4f;
 					}
 					if(sc > 1.0) {                 // based on 320px width
-						tt.setTextSize(tt.getTextSize()*sc);
-						p1.setTextSize(p1.getTextSize()*sc);
-						p2.setTextSize(p2.getTextSize()*sc);
-						s1.setTextSize(s1.getTextSize()*sc);
-						s2.setTextSize(s2.getTextSize()*sc);
+//						tt.setTextSize(tt.getTextSize()*sc);
+//						p1.setTextSize(p1.getTextSize()*sc);
+//						p2.setTextSize(p2.getTextSize()*sc);
+//						s1.setTextSize(s1.getTextSize()*sc);
+//						s2.setTextSize(s2.getTextSize()*sc);
 					}
 					
-					if(myDebugLevel.Msg > 0) 
+					if(myDebugLevel.Msg > 0) {
 						Log.d("UI_info1", "Screen width:"+
 								Integer.toString(wDisp.getMeasuredWidth())+"  "+
 								Integer.toString(wDisp.getWidth())+" ->"+Float.toString(sc));
+						Log.d("UI_info1", "Screen density: "+Float.toString(scr));
+					}
 				} 
 			});
-		}
+//		}
 	}	
 
 	@Override
@@ -278,17 +297,20 @@ public class MainActivity extends Activity {
 				if(s <= 0) {
 					// should not happen
 				}
-				else if(s == 1) {
-					// initial display
-					p1.setBackgroundColor(0xFFFFFF66);
-					p2.setBackgroundColor(Color.WHITE);
-				}
+//				else if(s == 1) {
+//					// initial display
+//					pn[(G0.huseturn+1)%2].setBackgroundColor(0xFFFFFF66);
+//					pn[G0.huseturn].setBackgroundColor(Color.WHITE);
+//				}
 				else if(s > 81) {
 					// just ended
 					p1.setBackgroundColor(0x00FFFFFF);
 					p2.setBackgroundColor(0x00FFFFFF);
 					saveGameProgress();
-					if(gameSettings < 64 && gameSettings%16 >= 4 && G0.getScores(1) > G0.getScores(2)) {
+					if((gameSettings/64)%2 == 0) {
+					// record high scores
+					}
+					if((gameSettings/64)%2==0  && gameSettings%16 >= BestMove.MAX_AI_Level && G0.getScores(1) > G0.getScores(2)) {
 						Toast.makeText(this, R.string.msg_winlogic,	Toast.LENGTH_LONG).show();
 						UIoptions += 16;
 					}
@@ -301,7 +323,7 @@ public class MainActivity extends Activity {
 					pn[G0.huseturn].setBackgroundColor(Color.WHITE);
 
 					// if 1-player game 
-					if(bd.getGameState()<64 && G0.huseturn==0) {  // vs. AI
+					if((bd.getGameState()/64)%2==0 && G0.huseturn==0 && bd.getGameState()<1024) {
 						bd.setGameState(bd.getGameState()+1024);
 						dispatchAI(G0.movesSeq);
 					}
@@ -325,13 +347,13 @@ public class MainActivity extends Activity {
 	static final String SAVEGAMEKEY_NAME1 = "P1Name9";
 	static final String SAVEGAMEKEY_NAME2 = "P2Name9";
 	static final String STATUS_UIOPTIONS = "UIoptions";
-	
+			
 	void saveGameProgress() {
 		if(bd.getGameState()<0 || G0==null) {
 			return ;
 		}
-	//This function is not fully tested
 		if(myDebugLevel.Mode) {
+			//This function is not fully tested
 			ObjectOutputStream outob;
 			try {
 				outob = new ObjectOutputStream(openFileOutput("gameinplay", 0));
@@ -383,6 +405,14 @@ public class MainActivity extends Activity {
 					G0 = new GamePlay(p);
 				else
 					G0 = new GamePlay0(p);
+			// player 2 went first
+				if((s/256)%2 == 1) {
+					int sc;
+					sc = G0.scores1;
+					G0.scores1 = G0.scores2;
+					G0.scores2 = sc;
+					G0.huseturn = (G0.huseturn + 1) % 2;
+				}
 				bd.setGame0(G0);
 				bd.setGameState(s);
 				if(myDebugLevel.Msg > 0)
@@ -472,9 +502,9 @@ public class MainActivity extends Activity {
 		Tnow -= 978307200L;                           // since 2001
 		
 		// Get game settings from preference
-		if(mode == 1) {  // 1 player
+		if(mode == 1 || mode == 11) {                 // 1 player
 			gameSettings = Integer.parseInt(settingsPrefs.getString("LevelsOfDifficulty", "1"));
-		} else { // 2 or more players
+		} else {                                      // 2 or more players
 			gameSettings = 64;
 		}
 		if(settingsPrefs.getBoolean("oldRules", false)) {
@@ -486,6 +516,10 @@ public class MainActivity extends Activity {
 			G0 = new GamePlay();
 		}
 		G0.recordMove((int)(101+Tnow));
+		if(mode == 11 || mode == 12) {                // P2 go first
+			gameSettings += 256;
+			G0.huseturn = (G0.huseturn + 1) % 2;
+		}
 		bd.setGame0(G0);
 		bd.setGameState(gameSettings);
 		// reset scores
@@ -495,7 +529,7 @@ public class MainActivity extends Activity {
 		p2.setBackgroundColor(Color.WHITE);
 		p1.setText(sTrimTo9(settingsPrefs.getString("P1name", "P1")));
 		String[] AInames = getResources().getStringArray(R.array.LevelsDifficulty);
-		if(mode == 1)
+		if(mode == 1 || mode == 11)
 			p2.setText(AInames[gameSettings%16-1]);   //careful when modifying the strings
 		else
 			p2.setText(sTrimTo9(settingsPrefs.getString("P2name", "P2")));

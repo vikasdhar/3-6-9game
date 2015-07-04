@@ -3,7 +3,7 @@ package xluz.droidacts.sanLiuJiu;
 /*
   Game data object 
 
-Copyright (c) 2014 Cecil Cheung
+Copyright (c) 2014, 2015 Cecil Cheung
 This software is released under the GNU General Public License version 3.
 See, for example, "http://www.gnu.org/licenses/gpl.html".
 */
@@ -96,7 +96,7 @@ class GamePlay {
 		movesSeq[cstatus] = m;
 		int sc=checkScores(m);
 		if(sc >= 0 && cstatus > 0) {
-			if(cstatus%2==0) scores2 += sc;
+			if(huseturn == 0) scores2 += sc;
 			else scores1 += sc;
 			movesScore[cstatus] = sc;
 		}
